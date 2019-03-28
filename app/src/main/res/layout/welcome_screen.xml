@@ -3,24 +3,121 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/Grey">
+    android:background="@drawable/bg">
 
     <ImageView
         android:id="@+id/appLogo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/logo"
-        android:layout_centerInParent="true"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="@drawable/app_logo"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_margin="20dp"
         />
 
-    <ImageView
-        android:id="@+id/loading"
+    <TextView
+        android:id="@+id/adits"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/loading"
-        android:layout_centerHorizontal="true"
+        android:text="@string/adits"
+        android:textSize="40sp"
         android:layout_below="@id/appLogo"
+        android:layout_centerHorizontal="true"
         android:layout_margin="10dp"
+        android:textStyle="bold"
         />
 
+    <TextView
+        android:id="@+id/kayitText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/adits"
+        android:text="@string/sign_up"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@color/transparentWhite"
+        android:textAlignment="center"
+        />
+
+
+    <EditText
+        android:id="@+id/name_input"
+        android:layout_width="wrap_content"
+        android:layout_height="60dp"
+        android:background="@drawable/edittext_bg"
+        android:layout_centerHorizontal="true"
+        android:ems="10"
+        android:layout_below="@id/kayitText"
+        android:hint="@string/name"
+        android:textAlignment="center"
+        android:imeOptions="actionDone"
+        android:layout_margin="5dp"
+        android:textColorHint="@color/DarkGrey"
+        />
+
+    <EditText
+        android:id="@+id/tc_input"
+        android:layout_width="wrap_content"
+        android:layout_height="60dp"
+        android:background="@drawable/edittext_bg"
+        android:layout_centerHorizontal="true"
+        android:ems="10"
+        android:layout_below="@id/name_input"
+        android:hint="@string/tc_id_no"
+        android:textAlignment="center"
+        android:imeOptions="actionDone"
+        android:inputType="number"
+        android:layout_margin="5dp"
+        android:textColorHint="@color/DarkGrey"
+        />
+
+    <EditText
+        android:id="@+id/age_input"
+        android:layout_width="wrap_content"
+        android:layout_height="60dp"
+        android:background="@drawable/edittext_bg"
+        android:layout_centerHorizontal="true"
+        android:ems="10"
+        android:layout_below="@id/tc_input"
+        android:hint="@string/age"
+        android:textAlignment="center"
+        android:imeOptions="actionDone"
+        android:inputType="number"
+        android:layout_margin="5dp"
+        android:textColorHint="@color/DarkGrey"
+        />
+
+    <Spinner
+        android:id="@+id/health_input"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_below="@id/age_input"
+        android:layout_margin="5dp"
+        android:background="@drawable/edittext_bg"
+        >
+    </Spinner>
+
+    <Button
+        android:hint="@string/health_status"
+        android:id="@+id/submitBtn"
+        android:layout_width="280dp"
+        android:layout_height="70dp"
+        android:background="@drawable/button"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/health_input"
+        android:layout_margin="80dp"
+        android:text="@string/submit"
+        android:textSize="30sp"
+        android:textColor="@color/brokenWhite"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:text="@string/via_computer_systems_limited_company"
+        android:textColor="@color/Grey"
+        android:layout_centerHorizontal="true"
+        />
 </RelativeLayout>

@@ -1,3 +1,18 @@
 <resources>
-    <string name="app_name">ADITS</string>
+    <string name="app_name">Via Adits</string>
+    <string name="submit">SUBMIT</string>
+    <string name="name">NAME</string>
+    <string name="tc_id_no">TC ID NUMBER</string>
+    <string name="sign_up">Please enter your personal info for setting Adits up !</string>
+    <string name="age">AGE</string>
+    <string name="health_status">HEALTH STATUS</string>
+    <string name="adits">ADITS</string>
+    <string name="acil_durum">Acil Durum İmdat Takip Sistemi</string>
+    <string name="emergency_aid_tracking_system">EMERGENCY AID TRACKING SYSTEM</string>
+    <string name="via_computer_systems_limited_company">Via Computer Systems Limited Company</string>
+    <string-array name="Status">
+        <item>Good</item>
+        <item>Moderate</item>
+        <item>Poor</item>
+    </string-array>
 </resources>
