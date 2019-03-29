@@ -15,6 +15,11 @@
     <string name="dbm">dBm:</string>
     <string name="mac">Mac:</string>
     <string name="info_text">Found networks has been listed below. Please select one of them to connect and see the personal information !</string>
+    <string name="name2">Name :</string>
+    <string name="tc_id">Tc Id:</string>
+    <string name="age2">Age :</string>
+    <string name="health_status2">Health Status :</string>
+    <string name="level">Level :</string>
     <string-array name="Status">
         <item>Good</item>
         <item>Moderate</item>
