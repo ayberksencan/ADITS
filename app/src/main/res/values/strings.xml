@@ -10,6 +10,11 @@
     <string name="acil_durum">Acil Durum İmdat Takip Sistemi</string>
     <string name="emergency_aid_tracking_system">EMERGENCY AID TRACKING SYSTEM</string>
     <string name="via_computer_systems_limited_company">Via Computer Systems Limited Company</string>
+    <string name="register_screen_app_logo">Register Screen App Logo</string>
+    <string name="ssid">SSID:</string>
+    <string name="dbm">dBm:</string>
+    <string name="mac">Mac:</string>
+    <string name="info_text">Found networks has been listed below. Please select one of them to connect and see the personal information !</string>
     <string-array name="Status">
         <item>Good</item>
         <item>Moderate</item>
