@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.via.adits.FunctionalUses.ControlClass;
+import com.via.adits.FunctionalUses.JsonClass;
 
 public class WelcomeScreen extends AppCompatActivity {
 
@@ -52,16 +53,45 @@ public class WelcomeScreen extends AppCompatActivity {
         Button submitButton = (Button) findViewById(R.id.submitBtn);
         TextView companyNameWelcome = (TextView) findViewById(R.id.companyNameWelcome);
 
+
         //A controller object has been created to control progress through the activity.
         final ControlClass controller = new ControlClass();
+
+        //A JsonClass object has been created to send and get Json data.
+        final JsonClass json = new JsonClass();
 
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                controller.editTextNullCheck(nameInput, getApplicationContext());
-                controller.editTextNullCheck(tcInput, getApplicationContext());
-                controller.editTextNullCheck(ageInput, getApplicationContext());
-                controller.spinnerNullCheck(healthInput, getApplicationContext());
+                //Checking if EditTexts and Spinner is null or not.
+               controller.editTextNullCheck(nameInput, getApplicationContext());
+               controller.editTextNullCheck(tcInput, getApplicationContext());
+               controller.editTextNullCheck(ageInput, getApplicationContext());
+               controller.spinnerNullCheck(healthInput, getApplicationContext());
+
+               //gets the String values of editTexts
+               String name_data = String.valueOf(nameInput.getText());
+               String tc_data = String.valueOf(nameInput.getText());
+               String age_data = String.valueOf(nameInput.getText());
+               String health_data = String.valueOf(nameInput.getText());
+               Integer level_data = json.calculateLevel(age_data,health_data,getApplicationContext());
+
+               //Checking if EditTexts and Spinner is empty or not.
+                boolean name = controller.editTextEmptyCheck(nameInput, getApplicationContext());
+                boolean tc = controller.editTextEmptyCheck(tcInput, getApplicationContext());
+                boolean age = controller.editTextEmptyCheck(ageInput, getApplicationContext());
+
+                if(!name && !tc && !age){
+                   boolean wifiState =  controller.isConnected(getApplicationContext());
+                    if(wifiState){
+                        json.sendData(name_data, tc_data, age_data, health_data, level_data, getApplicationContext());
+                    }
+                }
+                else{
+                    //do nothing.
+                }
+
+
             }
         });
 
