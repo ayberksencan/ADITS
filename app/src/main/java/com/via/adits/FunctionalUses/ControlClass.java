@@ -1,13 +1,16 @@
 package com.via.adits.FunctionalUses;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.via.adits.WelcomeScreen;
 import com.via.adits.WifiScreen;
-
-import static android.content.Context.MODE_PRIVATE;
 
 public class ControlClass extends AppCompatActivity {
 
@@ -30,4 +33,23 @@ public class ControlClass extends AppCompatActivity {
         }
     }
 
+    public boolean editTextNullCheck(EditText e, Context c){
+        if(e == null){
+            Log.d("This is null: ", String.valueOf(e));
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    public boolean spinnerNullCheck(Spinner s, Context c) {
+        if (s == null) {
+            Log.d("This is null: ", String.valueOf(s));
+            return true;
+        } else {
+            return false;
+        }
+
+    }
 }

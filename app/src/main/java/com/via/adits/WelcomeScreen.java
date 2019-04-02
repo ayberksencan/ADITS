@@ -8,13 +8,18 @@ package com.via.adits;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.via.adits.FunctionalUses.ControlClass;
 
 public class WelcomeScreen extends AppCompatActivity {
 
@@ -40,10 +45,25 @@ public class WelcomeScreen extends AppCompatActivity {
         ImageView appLogo = (ImageView) findViewById(R.id.appLogo);
         TextView adits = (TextView) findViewById(R.id.adits);
         TextView kayitText = (TextView) findViewById(R.id.kayitText);
-        EditText nameInput = (EditText) findViewById(R.id.name_input);
-        EditText tcInput = (EditText) findViewById(R.id.tc_input);
-        EditText ageInput = (EditText) findViewById(R.id.age_input);
-        Spinner healthInput = (Spinner) findViewById(R.id.health_input);
+        final EditText nameInput = (EditText) findViewById(R.id.name_input);
+        final EditText tcInput = (EditText) findViewById(R.id.tc_input);
+        final EditText ageInput = (EditText) findViewById(R.id.age_input);
+        final Spinner healthInput = (Spinner) findViewById(R.id.health_input);
+        Button submitButton = (Button) findViewById(R.id.submitBtn);
+        TextView companyNameWelcome = (TextView) findViewById(R.id.companyNameWelcome);
+
+        //A controller object has been created to control progress through the activity.
+        final ControlClass controller = new ControlClass();
+
+        submitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                controller.editTextNullCheck(nameInput, getApplicationContext());
+                controller.editTextNullCheck(tcInput, getApplicationContext());
+                controller.editTextNullCheck(ageInput, getApplicationContext());
+                controller.spinnerNullCheck(healthInput, getApplicationContext());
+            }
+        });
 
     }
 
