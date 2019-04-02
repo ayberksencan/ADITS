@@ -14,6 +14,9 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.via.adits.FunctionalUses.AnimationsClass;
+import com.via.adits.FunctionalUses.ControlClass;
+
 
 public class SplashScreen extends AppCompatActivity {
 
@@ -41,8 +44,13 @@ public class SplashScreen extends AppCompatActivity {
         TextView aditsLong = (TextView) findViewById(R.id.adits3);
         TextView companyName = (TextView) findViewById(R.id.companyName);
 
+        //A controller object has been created to control progress through the activity.
+        ControlClass controller = new ControlClass();
+        controller.firstRun();
 
+        //A animation object has been created to animate imageview.
+        AnimationsClass animation = new AnimationsClass();
+        animation.rotateClockwise(appLogo,getApplicationContext());
 
     }
-
 }
