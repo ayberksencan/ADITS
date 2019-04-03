@@ -16,15 +16,20 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.via.adits.R;
 import com.via.adits.WelcomeScreen;
 import com.via.adits.WifiScreen;
+import com.via.adits.WifiUses.WifiReceiver;
 
 import org.jsoup.select.Evaluator;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +42,11 @@ public class ControlClass extends AppCompatActivity {
     public static final int REQUEST_ID_MULTIPLE_PERMISSIONS = 1;
     List<String> listPermissionsNeeded = new ArrayList<>();
     LocationManager lm = (LocationManager) getBaseContext().getSystemService(Context.LOCATION_SERVICE);
+    WifiReceiver wifiReceiver = new WifiReceiver();
+    //Calling itemList from wifiReceiver.
+    ArrayList<Item> itemList = wifiReceiver.getItemList();
+    WifiScreen wifiScreen = new WifiScreen();
+    public int position;
 
     //This function controls if the app launched for first time or not and chooses which screen
     //will be opened.
@@ -190,13 +200,38 @@ public class ControlClass extends AppCompatActivity {
         }
     }
 
-    public void searchWifi(Context c){
+    public ArrayList<Item> searchWifi(Context c){
 
-
+        //Gets, splits and stores the wifi scan results.
+        //Now they are ready to shown on list.
+        wifiReceiver.onReceive(getApplicationContext(), new Intent(c, WifiScreen.class));
+        return itemList;
     }
 
     public WifiManager getWifiManager(){
         return wifiManager;
+    }
+
+    public void showConnected(String ssid, CustomAdapter adapter, View convertView){
+        ListView listView;
+        WifiScreen listview = new WifiScreen();
+        listView = listview.getListView();
+
+        for (int i= 0; i< itemList.size(); i++){
+            if(ssid.equalsIgnoreCase(itemList.get(i).getSsid())){
+                adapter.setConnected(i, convertView, null);
+                position = i;
+            }
+        }
+    }
+
+    public void showDisconnected(String ssid, CustomAdapter adapter, View convertView){
+        ListView listView;
+        WifiScreen listview = new WifiScreen();
+        listView = listview.getListView();
+
+        adapter.setDisconnected(position, convertView, null);
+
     }
 
 }

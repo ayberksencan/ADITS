@@ -22,6 +22,8 @@
     <string name="level">Level :</string>
     <string name="content_description_logo">The Logo of the Product.</string>
     <string name="info_range_text">Information text for Range Screen</string>
+    <string name="connected">Connected</string>
+    <string name="disconnected">Disconnected !</string>
     <string-array name="Status">
         <item>Good</item>
         <item>Moderate</item>
