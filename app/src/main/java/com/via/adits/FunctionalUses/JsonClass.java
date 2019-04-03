@@ -9,13 +9,15 @@ import java.io.IOException;
 
 public class JsonClass {
 
-    public void sendData(String name, String tcId, String age, String health, Integer level, Context context){
+    public boolean sendData(String name, String tcId, String age, String health, Integer level, Context context){
         try {
             Jsoup.connect("http://192.168.4.1/buffer").data("u_name", String.valueOf(name)).data("u_tcno", String.valueOf(tcId)).data("u_age", String.valueOf(age)).data("u_healts", String.valueOf(health)).data("u_level", String.valueOf(level)).post();
             Toast.makeText(context, "Veriler başarıyla güncellendi !", Toast.LENGTH_SHORT).show();
+            return true;
         } catch (IOException e) {
-            Toast.makeText(context, "Veri göderimi başarısız lütfen tekrar deneyin !", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Data update failed! Please check network connection.", Toast.LENGTH_SHORT).show();
             e.printStackTrace();
+            return false;
         }
     }
 

@@ -5,10 +5,11 @@ package com.via.adits;
 //Company: Via Computer Systems Limited Company
 //Start Date of Project: 13/02/2019
 
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.net.wifi.WifiConfiguration;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -17,7 +18,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.via.adits.FunctionalUses.ControlClass;
 import com.via.adits.FunctionalUses.JsonClass;
@@ -60,6 +60,22 @@ public class WelcomeScreen extends AppCompatActivity {
         //A JsonClass object has been created to send and get Json data.
         final JsonClass json = new JsonClass();
 
+        //Controls if the network is in the Configured Networks list. If so, deletes the old one
+        //saves and returns the new one.
+        final boolean connection = controller.isConnected(getApplicationContext());
+        if(connection){
+            if(controller.isAdits()){
+                WifiConfiguration conf = controller.getConf();
+                int netId = controller.deleteNetwork(conf);
+                controller.connectWifi(netId);
+            }
+            else{
+                controller.disconnectWifi();
+                controller.showMessage("Disconnected from non-Adits network!",getApplicationContext());
+            }
+        }
+
+
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -81,10 +97,30 @@ public class WelcomeScreen extends AppCompatActivity {
                 boolean tc = controller.editTextEmptyCheck(tcInput, getApplicationContext());
                 boolean age = controller.editTextEmptyCheck(ageInput, getApplicationContext());
 
+
+                //Checking if EditTexts are empty or not.
                 if(!name && !tc && !age){
+                    //Checking if wifi is connected or not.
                    boolean wifiState =  controller.isConnected(getApplicationContext());
                     if(wifiState){
-                        json.sendData(name_data, tc_data, age_data, health_data, level_data, getApplicationContext());
+                        //Checking if wifi connected to ADITS or not.
+                        if(controller.isAdits()){
+                            boolean isSend = json.sendData(name_data, tc_data, age_data, health_data, level_data, getApplicationContext());
+                            //Checking if the Json data successfully sent or not.
+                            if(isSend){
+                                controller.showMessage("Data successfully updated ! Switching to Wifi Scanning Screen.", getApplicationContext());
+                                startActivity(new Intent(WelcomeScreen.this, WifiScreen.class));
+                            }
+                            else{
+                                controller.showMessage("Data updating failed. Please try again !", getApplicationContext());
+                            }
+                        }
+                        else{
+                            controller.showMessage("You can update the data only when connected to an ADITS network!", getApplicationContext());
+                        }
+                    }
+                    else{
+                        controller.showMessage("Please try again after connecting to a network !",getApplicationContext());
                     }
                 }
                 else{

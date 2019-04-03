@@ -6,7 +6,9 @@ package com.via.adits;
 //Start Date of Project: 13/02/2019
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.pm.ActivityInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
@@ -14,6 +16,8 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.via.adits.FunctionalUses.ControlClass;
 
 public class WifiScreen extends Activity {
 
@@ -45,6 +49,25 @@ public class WifiScreen extends Activity {
         ListView wifiList = (ListView) findViewById(R.id.wifi_list);
         ImageView warning = (ImageView) findViewById(R.id.warning);
         TextView infoWifiScreen = (TextView) findViewById(R.id.info);
+
+
+        //A controller object has been created to control progress through the activity.
+        ControlClass controller = new ControlClass();
+
+        //WifiManager object has been called from ControlClass.
+        WifiManager wifiManager = controller.getWifiManager();
+
+        //Checks if Build version is compatible with target SDK version
+        if(controller.checkBuildVersion()){
+            //Checks if the requested permissions given or not.
+            //If not requests needed permissions.
+            controller.checkAndRequestPermissions(getApplicationContext());
+            //Checks if Wifi enabled or not. If not enables wifi.
+            controller.enableWifi(getApplicationContext());
+
+        }
+
+
     }
 
 }
