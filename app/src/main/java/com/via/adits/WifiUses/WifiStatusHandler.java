@@ -1,5 +1,5 @@
 package com.via.adits.WifiUses;
-
+/*
 import android.content.Context;
 import android.net.wifi.SupplicantState;
 import android.net.wifi.WifiInfo;
@@ -11,6 +11,7 @@ import android.view.View;
 import com.via.adits.FunctionalUses.ControlClass;
 import com.via.adits.FunctionalUses.CustomAdapter;
 import com.via.adits.FunctionalUses.Item;
+import com.via.adits.SplashScreen;
 import com.via.adits.WifiScreen;
 
 import java.util.ArrayList;
@@ -21,9 +22,19 @@ public class WifiStatusHandler extends Handler {
     WifiManager mainWifi;
     public Context context;
 
-    ControlClass controller = new ControlClass();
+    public WifiStatusHandler(ControlClass controlClass, WifiReceiver wifiReceiver, WifiScreen wifiScreen, SplashScreen splashScreen) {
+        this.controller = controlClass;
+        this.wifiReceiver = wifiReceiver;
+        this.wifiScreen = wifiScreen;
+        this.splashScreen = splashScreen;
+    }
+
+    WifiStatusHandler wifiStatusHandler;
+
+    SplashScreen splashScreen = new SplashScreen();
+    ControlClass controller = new ControlClass(null, null, null, wifiStatusHandler, null );
     WifiReceiver wifiReceiver = new WifiReceiver();
-    WifiScreen wifiScreen = new WifiScreen();
+    WifiScreen wifiScreen = new WifiScreen(controller, null, null ,null, null);
 
     public synchronized void start(Context c) {
         running = true;
@@ -78,3 +89,4 @@ public class WifiStatusHandler extends Handler {
         running = false;
     }
 }
+*/

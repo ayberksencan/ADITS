@@ -1,24 +1,30 @@
 package com.via.adits.FunctionalUses;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.widget.Toast;
 
 import org.jsoup.Jsoup;
 
 import java.io.IOException;
 
-public class JsonClass {
+public class JsonClass extends AsyncTask<Void, Void, Void>{
+
+    String Name;
+    String TcId;
+    String Age;
+    String Health;
+    Integer Level;
+    Context Context;
 
     public boolean sendData(String name, String tcId, String age, String health, Integer level, Context context){
-        try {
-            Jsoup.connect("http://192.168.4.1/buffer").data("u_name", String.valueOf(name)).data("u_tcno", String.valueOf(tcId)).data("u_age", String.valueOf(age)).data("u_healts", String.valueOf(health)).data("u_level", String.valueOf(level)).post();
-            Toast.makeText(context, "Veriler başarıyla güncellendi !", Toast.LENGTH_SHORT).show();
-            return true;
-        } catch (IOException e) {
-            Toast.makeText(context, "Data update failed! Please check network connection.", Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
-            return false;
-        }
+        Name = name;
+        TcId = tcId;
+        Age = age;
+        Health = health;
+        Context = context;
+        new JsonClass().execute();
+        return true;
     }
 
     public Integer calculateLevel(String age, String health, Context c){
@@ -60,7 +66,19 @@ public class JsonClass {
         }
 
         level = ageStatus + healthStatus;
+        Level = level;
         return level;
     }
 
+    @Override
+    protected Void doInBackground(Void... voids) {
+        try {
+            Jsoup.connect("http://192.168.4.1/buffer").data("u_name", String.valueOf(Name)).data("u_tcno", String.valueOf(TcId)).data("u_age", String.valueOf(Age)).data("u_healts", String.valueOf(Health)).data("u_level", String.valueOf(Level)).post();
+            Toast.makeText(Context, "Veriler başarıyla güncellendi !", Toast.LENGTH_SHORT).show();
+        } catch (IOException e) {
+            Toast.makeText(Context, "Data update failed! Please check network connection.", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

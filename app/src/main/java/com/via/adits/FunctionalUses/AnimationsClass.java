@@ -12,6 +12,7 @@ public class AnimationsClass {
 
     public void rotateClockwise (ImageView a, Context c){
         Animation rotateClockwise = AnimationUtils.loadAnimation(c, R.anim.rotate_clockwise);
+        rotateClockwise.setDuration(2500);
     }
 
 }

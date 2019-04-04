@@ -55,6 +55,7 @@
         android:imeOptions="actionDone"
         android:layout_margin="5dp"
         android:textColorHint="@color/DarkGrey"
+        android:textColor="@color/DarkGrey"
         />
 
     <EditText
@@ -71,6 +72,7 @@
         android:inputType="number"
         android:layout_margin="5dp"
         android:textColorHint="@color/DarkGrey"
+        android:textColor="@color/DarkGrey"
         />
 
     <EditText
@@ -87,6 +89,7 @@
         android:inputType="number"
         android:layout_margin="5dp"
         android:textColorHint="@color/DarkGrey"
+        android:textColor="@color/DarkGrey"
         />
 
     <Spinner
@@ -95,7 +98,9 @@
         android:layout_height="60dp"
         android:layout_below="@id/age_input"
         android:layout_margin="5dp"
-        android:background="@drawable/edittext_bg"
+        android:textAlignment="center"
+        android:popupBackground="@color/White"
+        android:spinnerMode="dropdown"
         >
     </Spinner>
 

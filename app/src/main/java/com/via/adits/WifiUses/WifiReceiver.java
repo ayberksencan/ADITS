@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+/*
 public class WifiReceiver extends BroadcastReceiver {
 
     public ArrayList<Item> itemList;
@@ -21,8 +22,10 @@ public class WifiReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
+        WifiReceiver wifiReceiver = new WifiReceiver();
+
         //A controller object has been created to control progress through the activity.
-        ControlClass controller = new ControlClass();
+        ControlClass controller = new ControlClass(null, null, wifiReceiver, null, null);
 
             List<ScanResult> wifiList;
             wifiList = controller.getWifiManager().getScanResults();
@@ -33,6 +36,7 @@ public class WifiReceiver extends BroadcastReceiver {
         StringBuilder networks_rssi = new StringBuilder();
         StringBuilder networks_frequency = new StringBuilder();
         StringBuilder networks_sp = new StringBuilder();
+        StringBuilder connected = new StringBuilder();
         int strengthInPercentage = 0;
 
         for (int i = 0; i < wifiList.size(); i++) {
@@ -42,12 +46,14 @@ public class WifiReceiver extends BroadcastReceiver {
             networks_rssi.append(",RSSI: ").append(wifiList.get(i).level).append(" dBm");
             strengthInPercentage = WifiManager.calculateSignalLevel(wifiList.get(i).level, 100);
             networks_sp.append(",").append(strengthInPercentage);
+            connected.append(",Connected");
 
             //Splits the data from "," to split found wifi information from each other.
             String[] aSSid = networks_ssid.toString().split(",");
             String[] aBssid = networks_bssid.toString().split(",");
             String[] aRssi = networks_rssi.toString().split(",");
             String[] aSp = networks_sp.toString().split(",");
+            String[] aConnected = connected.toString().split(",");
 
             //Stores StringBuilders in an ArrayList
             //We are doing this to show found wifi info at listView
@@ -55,7 +61,7 @@ public class WifiReceiver extends BroadcastReceiver {
             for (int k = 1; k <= wifiList.size(); k++) {
                 //Filtering found wifi networks via their SSID's.
                 if (aSSid[k].toLowerCase().contains("via") || aSSid[k].contains("ADITS")) {
-                    itemList.add(new Item(aSSid[k], aBssid[k], aRssi[k], aSp[k]));
+                    itemList.add(new Item(aSSid[k], aBssid[k], aRssi[k], aSp[k], aConnected[k]));
                 }
             }
         }
@@ -73,3 +79,4 @@ public class WifiReceiver extends BroadcastReceiver {
         return itemList;
     }
 }
+*/

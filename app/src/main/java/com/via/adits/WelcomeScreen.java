@@ -7,31 +7,50 @@ package com.via.adits;
 
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.Color;
 import android.net.wifi.WifiConfiguration;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.via.adits.FunctionalUses.ControlClass;
 import com.via.adits.FunctionalUses.JsonClass;
 
-public class WelcomeScreen extends AppCompatActivity {
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+public class WelcomeScreen extends AppCompatActivity{
+
+    public String healtInfo;
+    public int Position;
+    public boolean nameBoolean;
+    public boolean tcBoolean;
+    public boolean ageBoolean;
+    public boolean healthBoolean;
+    String[] health = {"Health Status","Good","Moderate","Poor"};
 
     @Override
     protected void onCreate(Bundle savedInstaveState) {
         super.onCreate(savedInstaveState);
 
+        WelcomeScreen welcomeScreen = new WelcomeScreen();
         //No title will be shown
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         //Bottom navigation bar of Android will not be shown.
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         //No Status Bar will be shown
         View decorView = getWindow().getDecorView();
         int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
@@ -46,92 +65,145 @@ public class WelcomeScreen extends AppCompatActivity {
         ImageView appLogo = (ImageView) findViewById(R.id.appLogo);
         TextView adits = (TextView) findViewById(R.id.adits);
         TextView kayitText = (TextView) findViewById(R.id.kayitText);
+        TextView companyNameWelcome = (TextView) findViewById(R.id.companyNameWelcome);
         final EditText nameInput = (EditText) findViewById(R.id.name_input);
         final EditText tcInput = (EditText) findViewById(R.id.tc_input);
         final EditText ageInput = (EditText) findViewById(R.id.age_input);
-        final Spinner healthInput = (Spinner) findViewById(R.id.health_input);
         Button submitButton = (Button) findViewById(R.id.submitBtn);
-        TextView companyNameWelcome = (TextView) findViewById(R.id.companyNameWelcome);
 
+        //Getting the instance of Spinner and applying OnItemSelectedListener on it
+        final Spinner healthInput = (Spinner) findViewById(R.id.health_input);
+        final List<String> healthList = new ArrayList<>(Arrays.asList(health));
 
-        //A controller object has been created to control progress through the activity.
+        //Creating a control class object to control processes.
         final ControlClass controller = new ControlClass();
 
-        //A JsonClass object has been created to send and get Json data.
+        //Creating a JsonClass object to send Json data.
         final JsonClass json = new JsonClass();
-
-        //Controls if the network is in the Configured Networks list. If so, deletes the old one
-        //saves and returns the new one.
-        final boolean connection = controller.isConnected(getApplicationContext());
-        if(connection){
-            if(controller.isAdits()){
-                WifiConfiguration conf = controller.getConf();
-                int netId = controller.deleteNetwork(conf);
-                controller.connectWifi(netId);
-            }
-            else{
-                controller.disconnectWifi();
-                controller.showMessage("Disconnected from non-Adits network!",getApplicationContext());
-            }
-        }
-
 
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Checking if EditTexts and Spinner is null or not.
-               controller.editTextNullCheck(nameInput, getApplicationContext());
-               controller.editTextNullCheck(tcInput, getApplicationContext());
-               controller.editTextNullCheck(ageInput, getApplicationContext());
-               controller.spinnerNullCheck(healthInput, getApplicationContext());
+                controller.editTextNullCheck(nameInput, WelcomeScreen.this);
+                controller.editTextNullCheck(tcInput, WelcomeScreen.this);
+                controller.editTextNullCheck(ageInput, WelcomeScreen.this);
+                if(nameInput == null || tcInput==null || ageInput == null ){
+                    Log.d("Error", "Something is null");
+                }
 
-               //gets the String values of editTexts
-               String name_data = String.valueOf(nameInput.getText());
-               String tc_data = String.valueOf(nameInput.getText());
-               String age_data = String.valueOf(nameInput.getText());
-               String health_data = String.valueOf(nameInput.getText());
-               Integer level_data = json.calculateLevel(age_data,health_data,getApplicationContext());
+                nameBoolean = controller.editTextEmptyCheck(nameInput, WelcomeScreen.this);
+                tcBoolean = controller.editTextEmptyCheck(tcInput, WelcomeScreen.this);
+                ageBoolean = controller.editTextEmptyCheck(ageInput, WelcomeScreen.this);
+                healthBoolean = controller.spinnerEmptyCheck(Position, WelcomeScreen.this);
 
-               //Checking if EditTexts and Spinner is empty or not.
-                boolean name = controller.editTextEmptyCheck(nameInput, getApplicationContext());
-                boolean tc = controller.editTextEmptyCheck(tcInput, getApplicationContext());
-                boolean age = controller.editTextEmptyCheck(ageInput, getApplicationContext());
+                controlEditTexts(nameInput, tcInput, ageInput, nameBoolean, tcBoolean,ageBoolean);
 
-
-                //Checking if EditTexts are empty or not.
-                if(!name && !tc && !age){
-                    //Checking if wifi is connected or not.
-                   boolean wifiState =  controller.isConnected(getApplicationContext());
-                    if(wifiState){
-                        //Checking if wifi connected to ADITS or not.
-                        if(controller.isAdits()){
-                            boolean isSend = json.sendData(name_data, tc_data, age_data, health_data, level_data, getApplicationContext());
-                            //Checking if the Json data successfully sent or not.
-                            if(isSend){
-                                controller.showMessage("Data successfully updated ! Switching to Wifi Scanning Screen.", getApplicationContext());
-                                startActivity(new Intent(WelcomeScreen.this, WifiScreen.class));
-                            }
-                            else{
-                                controller.showMessage("Data updating failed. Please try again !", getApplicationContext());
-                            }
+                if(!nameBoolean && !tcBoolean && !ageBoolean && !healthBoolean){
+                    if (controller.isConnected(WelcomeScreen.this)){
+                        if(controller.isAdits(WelcomeScreen.this)){
+                            String name = nameInput.getText().toString();
+                            String tc = tcInput.getText().toString();
+                            String age = ageInput.getText().toString();
+                            String health = healtInfo;
+                            Integer level = json.calculateLevel(age, health, WelcomeScreen.this);
+                            json.sendData(name, tc, age, health, level, WelcomeScreen.this);
                         }
                         else{
-                            controller.showMessage("You can update the data only when connected to an ADITS network!", getApplicationContext());
+                            Toast.makeText(WelcomeScreen.this, "Plase connect to a ADITS network !", Toast.LENGTH_SHORT).show();
                         }
-                    }
-                    else{
-                        controller.showMessage("Please try again after connecting to a network !",getApplicationContext());
+
                     }
                 }
-                else{
-                    //do nothing.
-                }
+
 
 
             }
         });
 
+
+        // Initializing an ArrayAdapter
+        final ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(
+                this,android.R.layout.simple_spinner_item,healthList){
+            @Override
+            public boolean isEnabled(int position){
+                if(position == 0)
+                {
+                    // Disable the first item from Spinner
+                    // First item will be use for hint
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+            @Override
+            public View getDropDownView(int position, View convertView,
+                                        ViewGroup parent) {
+                View view = super.getDropDownView(position, convertView, parent);
+                TextView tv = (TextView) view;
+                if(position == 0){
+                    // Set the hint text color gray
+                    tv.setTextColor(Color.GRAY);
+                }
+                else {
+                    tv.setTextColor(Color.BLACK);
+                }
+                return view;
+            }
+        };
+        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
+        healthInput.setAdapter(spinnerArrayAdapter);
+
+        healthInput.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selectedItemText = (String) parent.getItemAtPosition(position);
+                // If user change the default selection
+                // First item is disable and it is used for hint
+                if(position > 0){
+                    // Notify the selected item text
+                    healtInfo = selectedItemText;
+                    Position = position;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
+    public void controlEditTexts(EditText name, EditText tc, EditText age, boolean nameB, boolean tcB, boolean ageB){
 
+        if(nameB){
+            name.setBackground(getDrawable(R.drawable.edittext_bg_red));
+        }
+
+        else if (!nameB){
+            name.setBackground(getDrawable(R.drawable.edittext_bg));
+        }
+
+        if(tcB){
+            tc.setBackground(getDrawable(R.drawable.edittext_bg_red));
+        }
+
+        else if (!tcB){
+            tc.setBackground(getDrawable(R.drawable.edittext_bg));
+        }
+
+        if(ageB){
+            age.setBackground(getDrawable(R.drawable.edittext_bg_red));
+        }
+
+        else if (!ageB){
+            age.setBackground(getDrawable(R.drawable.edittext_bg));
+        }
+
+    }
+
+    public void sendData(String name, String tc, String age, String health, String level){
+
+    }
 }

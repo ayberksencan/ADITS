@@ -24,6 +24,16 @@
     <string name="info_range_text">Information text for Range Screen</string>
     <string name="connected">Connected</string>
     <string name="disconnected">Disconnected !</string>
+    <string name="healthStatus">Health Status</string>
+    <string name="good">Good</string>
+    <string name="Moderate">Moderate</string>
+    <string name="Poor">Poor</string>
+    <array name="Health">
+        <item>@string/healthStatus</item>
+        <item>@string/good</item>
+        <item>@string/Moderate</item>
+        <item>@string/Poor</item>
+    </array>
     <string-array name="Status">
         <item>Good</item>
         <item>Moderate</item>

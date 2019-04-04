@@ -1,69 +1,33 @@
 package com.via.adits.FunctionalUses;
 
-import android.Manifest;
+
 import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
-import android.os.Build;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import com.via.adits.R;
+import com.via.adits.SplashScreen;
 import com.via.adits.WelcomeScreen;
-import com.via.adits.WifiScreen;
-import com.via.adits.WifiUses.WifiReceiver;
-
-import org.jsoup.select.Evaluator;
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ControlClass extends AppCompatActivity {
 
-    WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-    SharedPreferences prefs = getSharedPreferences("prefs",MODE_PRIVATE);
     WifiConfiguration conf = new WifiConfiguration();
     public static final int REQUEST_ID_MULTIPLE_PERMISSIONS = 1;
     List<String> listPermissionsNeeded = new ArrayList<>();
-    LocationManager lm = (LocationManager) getBaseContext().getSystemService(Context.LOCATION_SERVICE);
-    WifiReceiver wifiReceiver = new WifiReceiver();
-    //Calling itemList from wifiReceiver.
-    ArrayList<Item> itemList = wifiReceiver.getItemList();
-    WifiScreen wifiScreen = new WifiScreen();
+    ControlClass controlClass;
+    WelcomeScreen welcomeScreen = new WelcomeScreen();
+    SplashScreen splashScreen = new SplashScreen();
     public int position;
+    public Context context;
 
-    //This function controls if the app launched for first time or not and chooses which screen
-    //will be opened.
-    public void firstRun(){
-        if (prefs.getBoolean("firstrun", true)) {
-            //If the app launched for first time.
-            //Setting first run flag false.
-            prefs.edit().putBoolean("firstrun", false).apply();
-            startActivity(new Intent(getApplicationContext(), WelcomeScreen.class));
-            finish();
-        }
-        //If the app has launched before.
-        else {
-            startActivity(new Intent(getApplicationContext() , WifiScreen.class));
-            finish();
-        }
-    }
 
     //This function controls if given EditText is null or not.
     public boolean editTextNullCheck(EditText e, Context c){
@@ -89,11 +53,20 @@ public class ControlClass extends AppCompatActivity {
     //This function controls if the given EditText is empty or not.
     public boolean editTextEmptyCheck(EditText e, Context c){
         if (e.getText().toString().isEmpty()){
-            e.setBackground(getDrawable(R.drawable.edittext_bg_red));
-            Toast.makeText(c, e.getHint()+ "Cannot be empty !", Toast.LENGTH_SHORT).show();
+            Toast.makeText(c, e.getHint()+ " CAN'T BE EMPTY !", Toast.LENGTH_SHORT).show();
             return true;
         }
         else return false;
+    }
+
+    public boolean spinnerEmptyCheck(int position, Context c){
+        if (position == 0){
+            Toast.makeText(c, "Please choose a health status !", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 
     //This function controls if the device is connected to a network or not.
@@ -114,6 +87,7 @@ public class ControlClass extends AppCompatActivity {
         Toast.makeText(c, s, Toast.LENGTH_LONG).show();
     }
 
+    /*
     //This function controls if the given network conf has already registered to configured networks
     //If so, deletes the old one and saves the new one.
     public int deleteNetwork(WifiConfiguration conf){
@@ -129,6 +103,9 @@ public class ControlClass extends AppCompatActivity {
         }
         return networkConfiguration;
     }
+    */
+
+    /*
 
     public WifiConfiguration getConf(){
 
@@ -153,8 +130,12 @@ public class ControlClass extends AppCompatActivity {
         wifiManager.disconnect();
 
     }
+    */
 
-    public boolean isAdits(){
+
+
+    public boolean isAdits(Context context){
+        WifiManager wifiManager = (WifiManager)  context.getSystemService(Context.WIFI_SERVICE);
         if(wifiManager.getConnectionInfo().getSSID().equalsIgnoreCase("00adits00")){
             return true;
         }
@@ -163,6 +144,7 @@ public class ControlClass extends AppCompatActivity {
         }
     }
 
+    /*
     public boolean checkBuildVersion(){
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
             return true;
@@ -172,6 +154,9 @@ public class ControlClass extends AppCompatActivity {
             return false;
         }
     }
+    */
+
+    /*
 
     public boolean checkAndRequestPermissions(Context c){
         final int permissionAccessCoarseLocation = ContextCompat.checkSelfPermission(this,
@@ -199,6 +184,9 @@ public class ControlClass extends AppCompatActivity {
             showMessage("Enabling wifi...", c);
         }
     }
+    */
+
+    /*
 
     public ArrayList<Item> searchWifi(Context c){
 
@@ -214,7 +202,7 @@ public class ControlClass extends AppCompatActivity {
 
     public void showConnected(String ssid, CustomAdapter adapter, View convertView){
         ListView listView;
-        WifiScreen listview = new WifiScreen();
+        WifiScreen listview = new WifiScreen(controlClass, null, null, null, null);
         listView = listview.getListView();
 
         for (int i= 0; i< itemList.size(); i++){
@@ -224,14 +212,15 @@ public class ControlClass extends AppCompatActivity {
             }
         }
     }
-
+    */
+    /*
     public void showDisconnected(String ssid, CustomAdapter adapter, View convertView){
         ListView listView;
-        WifiScreen listview = new WifiScreen();
+        WifiScreen listview = new WifiScreen(controlClass, null, null, null, null);
         listView = listview.getListView();
 
         adapter.setDisconnected(position, convertView, null);
 
-    }
+    }*/
 
 }
