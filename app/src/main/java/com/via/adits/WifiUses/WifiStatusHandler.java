@@ -22,19 +22,10 @@ public class WifiStatusHandler extends Handler {
     WifiManager mainWifi;
     public Context context;
 
-    public WifiStatusHandler(ControlClass controlClass, WifiReceiver wifiReceiver, WifiScreen wifiScreen, SplashScreen splashScreen) {
-        this.controller = controlClass;
-        this.wifiReceiver = wifiReceiver;
-        this.wifiScreen = wifiScreen;
-        this.splashScreen = splashScreen;
+    public WifiStatusHandler() {
     }
 
     WifiStatusHandler wifiStatusHandler;
-
-    SplashScreen splashScreen = new SplashScreen();
-    ControlClass controller = new ControlClass(null, null, null, wifiStatusHandler, null );
-    WifiReceiver wifiReceiver = new WifiReceiver();
-    WifiScreen wifiScreen = new WifiScreen(controller, null, null ,null, null);
 
     public synchronized void start(Context c) {
         running = true;
@@ -47,6 +38,7 @@ public class WifiStatusHandler extends Handler {
 
         if (running) {
 
+            ControlClass controller = new ControlClass();
             //Wifi information variables has been defined and initialized.
             mainWifi = controller.getWifiManager();
             int curWifiState = mainWifi.getWifiState();

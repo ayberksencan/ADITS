@@ -5,6 +5,7 @@ package com.via.adits;
 //Company: Via Computer Systems Limited Company
 //Start Date of Project: 13/02/2019
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
@@ -100,21 +101,23 @@ public class WelcomeScreen extends AppCompatActivity{
 
                 if(!nameBoolean && !tcBoolean && !ageBoolean && !healthBoolean){
                     if (controller.isConnected(WelcomeScreen.this)){
-                        if(controller.isAdits(WelcomeScreen.this)){
-                            WifiConfiguration conf = controller.getConf(WelcomeScreen.this);
-                            controller.deleteNetwork(conf, WelcomeScreen.this);
-                            String name = nameInput.getText().toString();
-                            String tc = tcInput.getText().toString();
-                            String age = ageInput.getText().toString();
-                            String health = healtInfo;
-                            Integer level = json.calculateLevel(age, health, WelcomeScreen.this);
-                            json.sendData(name, tc, age, health, level, WelcomeScreen.this);
+                        //CONFİGURATİON BURADA KONTROL EDİLECEK ! UNUTMA ! 05/04/2019 - 17:59 Cuma Burada Kaldın !
+                        WifiConfiguration conf = controller.getConf(WelcomeScreen.this);
+                        controller.deleteNetwork(conf, WelcomeScreen.this);
+                        controller.connectWifi(conf,WelcomeScreen.this);
+                        String name = nameInput.getText().toString();
+                        String tc = tcInput.getText().toString();
+                        String age = ageInput.getText().toString();
+                        String health = healtInfo;
+                        Integer level = json.calculateLevel(age, health, WelcomeScreen.this);
+                        int flag = json.flag();
+                        json.sendData(name, tc, age, health, level, WelcomeScreen.this);
+                        if(flag == 1){
+                            showMessage("Data has been updated successfully !");
                         }
+                        else{showMessage("Data couldn't updated, please be sure your are connected to adits !");}
                     }
                 }
-
-
-
             }
         });
 
@@ -201,7 +204,7 @@ public class WelcomeScreen extends AppCompatActivity{
 
     }
 
-    public void sendData(String name, String tc, String age, String health, String level){
-
+    public void showMessage(String message){
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 }

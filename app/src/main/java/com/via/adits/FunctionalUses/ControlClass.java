@@ -111,6 +111,7 @@ public class ControlClass extends AppCompatActivity {
     public WifiConfiguration getConf(Context c){
 
         WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        assert wifiManager != null;
         for(int i = 0; i<wifiManager.getConfiguredNetworks().size(); i++){
             if (wifiManager.getConnectionInfo().getSSID().equals(wifiManager.getConfiguredNetworks().get(i).SSID)){
                 conf.SSID = wifiManager.getConfiguredNetworks().get(i).SSID;
@@ -120,22 +121,24 @@ public class ControlClass extends AppCompatActivity {
         return conf;
     }
 
-    /*
+
 
        //Will be opened
-    public void connectWifi(WifiConfiguration conf){
+    public void connectWifi(WifiConfiguration conf, Context c){
 
+        WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         wifiManager.disconnect();
+        int netId = wifiManager.addNetwork(conf);
+        wifiManager.saveConfiguration();
         wifiManager.enableNetwork(netId, true);
         wifiManager.reconnect();
     }
 
-    public void disconnectWifi(){
-
+    public void disconnectWifi(Context c){
+        WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         wifiManager.disconnect();
-
     }
-    */
+
 
 
 

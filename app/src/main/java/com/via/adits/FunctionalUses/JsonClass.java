@@ -2,13 +2,12 @@ package com.via.adits.FunctionalUses;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.widget.Toast;
 
 import org.jsoup.Jsoup;
 
 import java.io.IOException;
 
-public class JsonClass extends AsyncTask<Void, Void, Void>{
+public class JsonClass extends AsyncTask<Void, Void, Void> {
 
     String Name;
     String TcId;
@@ -16,6 +15,7 @@ public class JsonClass extends AsyncTask<Void, Void, Void>{
     String Health;
     Integer Level;
     Context Context;
+    int flag;
 
     public boolean sendData(String name, String tcId, String age, String health, Integer level, Context context){
         Name = name;
@@ -74,11 +74,15 @@ public class JsonClass extends AsyncTask<Void, Void, Void>{
     protected Void doInBackground(Void... voids) {
         try {
             Jsoup.connect("http://192.168.4.1/buffer").data("u_name", String.valueOf(Name)).data("u_tcno", String.valueOf(TcId)).data("u_age", String.valueOf(Age)).data("u_healts", String.valueOf(Health)).data("u_level", String.valueOf(Level)).post();
-            Toast.makeText(Context, "Veriler başarıyla güncellendi !", Toast.LENGTH_SHORT).show();
+            flag = 1;
         } catch (IOException e) {
-            Toast.makeText(Context, "Data update failed! Please check network connection.", Toast.LENGTH_SHORT).show();
+            flag = 0;
             e.printStackTrace();
         }
         return null;
+    }
+
+    public int flag (){
+        return flag;
     }
 }
