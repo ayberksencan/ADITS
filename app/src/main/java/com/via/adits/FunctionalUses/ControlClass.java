@@ -87,14 +87,17 @@ public class ControlClass extends AppCompatActivity {
         Toast.makeText(c, s, Toast.LENGTH_LONG).show();
     }
 
-    /*
+
     //This function controls if the given network conf has already registered to configured networks
     //If so, deletes the old one and saves the new one.
-    public int deleteNetwork(WifiConfiguration conf){
+    public int deleteNetwork(WifiConfiguration conf, Context context){
 
         int networkConfiguration = 0;
 
-        for(int i=0 ; i<wifiManager.getConfiguredNetworks().size(); i++){
+        WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+
+        assert wifiManager != null;
+        for(int i = 0; i<wifiManager.getConfiguredNetworks().size(); i++){
             if(conf.SSID.equals(wifiManager.getConfiguredNetworks().get(i).SSID)){
                 wifiManager.getConfiguredNetworks().remove(i);
                 networkConfiguration = wifiManager.addNetwork(conf);
@@ -103,12 +106,11 @@ public class ControlClass extends AppCompatActivity {
         }
         return networkConfiguration;
     }
-    */
 
-    /*
 
-    public WifiConfiguration getConf(){
+    public WifiConfiguration getConf(Context c){
 
+        WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         for(int i = 0; i<wifiManager.getConfiguredNetworks().size(); i++){
             if (wifiManager.getConnectionInfo().getSSID().equals(wifiManager.getConfiguredNetworks().get(i).SSID)){
                 conf.SSID = wifiManager.getConfiguredNetworks().get(i).SSID;
@@ -118,7 +120,9 @@ public class ControlClass extends AppCompatActivity {
         return conf;
     }
 
-    public void connectWifi(int netId){
+    /*
+
+    public void connectWifi(WifiConfiguration conf){
 
         wifiManager.disconnect();
         wifiManager.enableNetwork(netId, true);
@@ -135,11 +139,13 @@ public class ControlClass extends AppCompatActivity {
 
 
     public boolean isAdits(Context context){
-        WifiManager wifiManager = (WifiManager)  context.getSystemService(Context.WIFI_SERVICE);
+        WifiManager wifiManager = (WifiManager)  context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        assert wifiManager != null;
         if(wifiManager.getConnectionInfo().getSSID().equalsIgnoreCase("00adits00")){
             return true;
         }
         else{
+            Toast.makeText(context, "Please connect to an ADITS network !", Toast.LENGTH_SHORT).show();
             return false;
         }
     }

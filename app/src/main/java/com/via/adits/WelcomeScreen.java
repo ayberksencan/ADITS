@@ -101,6 +101,8 @@ public class WelcomeScreen extends AppCompatActivity{
                 if(!nameBoolean && !tcBoolean && !ageBoolean && !healthBoolean){
                     if (controller.isConnected(WelcomeScreen.this)){
                         if(controller.isAdits(WelcomeScreen.this)){
+                            WifiConfiguration conf = controller.getConf(WelcomeScreen.this);
+                            controller.deleteNetwork(conf, WelcomeScreen.this);
                             String name = nameInput.getText().toString();
                             String tc = tcInput.getText().toString();
                             String age = ageInput.getText().toString();
@@ -108,10 +110,6 @@ public class WelcomeScreen extends AppCompatActivity{
                             Integer level = json.calculateLevel(age, health, WelcomeScreen.this);
                             json.sendData(name, tc, age, health, level, WelcomeScreen.this);
                         }
-                        else{
-                            Toast.makeText(WelcomeScreen.this, "Plase connect to a ADITS network !", Toast.LENGTH_SHORT).show();
-                        }
-
                     }
                 }
 
