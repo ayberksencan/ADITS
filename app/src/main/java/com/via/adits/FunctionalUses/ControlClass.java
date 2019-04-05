@@ -122,6 +122,7 @@ public class ControlClass extends AppCompatActivity {
 
     /*
 
+       //Will be opened
     public void connectWifi(WifiConfiguration conf){
 
         wifiManager.disconnect();
