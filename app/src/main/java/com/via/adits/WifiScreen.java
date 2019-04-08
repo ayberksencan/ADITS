@@ -15,6 +15,7 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.net.wifi.ScanResult;
+import android.net.wifi.SupplicantState;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Build;
@@ -29,13 +30,14 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.via.adits.Adapters.CustomAdapter;
-import com.via.adits.FunctionalUses.ControlClass;
 import com.via.adits.FunctionalUses.Item;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -48,14 +50,13 @@ public class WifiScreen extends AppCompatActivity {
 
     ListView listView;
     List<Item> wifiAddresses;
-    List<ScanResult> scanResults = new ArrayList<ScanResult>();
     SwipeRefreshLayout pullToRefresh;
     CustomAdapter wifiAdapter;
     public WifiManager wifiManager;
     public WifiReceiver receiverWifi;
     public LocationManager lm;
     public CustomAdapter customAdapter;
-    public ControlClass controller;
+    private int con_pos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +88,7 @@ public class WifiScreen extends AppCompatActivity {
         TextView infoWifiScreen = (TextView) findViewById(R.id.info);
         TextView connected;
         View convertView;
-        ArrayList itemList = null;
+        final ArrayList itemList = null;
 
         final ProgressDialog progressDialog1 = new ProgressDialog(WifiScreen.this);
         wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
@@ -106,13 +107,14 @@ public class WifiScreen extends AppCompatActivity {
                 progressDialog1.setMessage("Scanning...");
                 progressDialog1.setCancelable(false);
                 scanWifi();
+                controlConfigured(wifiAddresses);
                 final Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         progressDialog1.dismiss();
                     }
-                }, 1500);
+                }, 3000);
             } else {
                 //Eğer GPS izni vermilmemişse Ekrana yazı basan blok.
                 if (!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
@@ -126,38 +128,75 @@ public class WifiScreen extends AppCompatActivity {
                             progressDialog1.setMessage("Scanning...");
                             progressDialog1.setCancelable(false);
                             scanWifi();
+                            controlConfigured(wifiAddresses);
                             final Handler handler = new Handler();
                             handler.postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
                                     progressDialog1.dismiss();
                                 }
-                            }, 1500);
+                            }, 3000);
                         }
                         progressDialog1.show();
                         progressDialog1.setMessage("Scanning...");
                         progressDialog1.setCancelable(false);
                         scanWifi();
-                        if(wifiManager.getConnectionInfo().getSupplicantState().toString().equalsIgnoreCase("completed")){
-                            for (int i = 0; i<wifiAddresses.size(); i++){
-                                if (wifiAddresses.get(i).getSsid().equalsIgnoreCase(wifiManager.getConnectionInfo().getSSID())){
-                                    Log.d("WifiAddresses", wifiAddresses.get(i).getSsid());
-                                    Log.d("wifiManager", wifiManager.getConnectionInfo().getSSID());
-                                    customAdapter.setConnected(i);
-                                }
-                            }
-                        }
+                        controlConfigured(wifiAddresses);
                         final Handler handler = new Handler();
                         handler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
                                 progressDialog1.dismiss();
                             }
-                        }, 1500);
+                        }, 3000);
                     }
                 }
             }
         }
+
+
+            wifiList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                SupplicantState info = wifiManager.getConnectionInfo().getSupplicantState();
+                //Item üzerine tıklanması halinde geçekleşecek olan animasyonu tanımlayan fonksiyon.
+                Animation animation1 = new AlphaAnimation(0.3f, 1.0f);
+                animation1.setDuration(650);
+                view.startAnimation(animation1);
+                try{
+                    Thread.sleep(500);
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                }
+                //ListView'de seçili olan item'ın pozisyonunu depolayan değişken. (con_pos) [Daha sonra kullanılacak]
+                con_pos = position;
+
+                String ssid = wifiAddresses.get(con_pos).getSsid();
+                String key = "12345678";
+
+                WifiConfiguration wifiConfig = new WifiConfiguration();
+                wifiConfig.SSID = String.format("\"%s\"", ssid);
+                wifiConfig.preSharedKey = String.format("\"%s\"", key);
+
+                int netId = wifiManager.addNetwork(wifiConfig);
+                wifiManager.enableNetwork(netId, true);
+                wifiManager.reconnect();
+
+                if (wifiManager.getConnectionInfo().getSupplicantState().toString().equalsIgnoreCase("completed")){
+                    if (wifiManager.getConnectionInfo().getSSID().equalsIgnoreCase(ssid)){
+                        // BURADA KALDIN !
+                    }
+                }
+                else{
+                    customAdapter.setDisconnected(con_pos);
+                }
+
+
+
+            }
+        });
 
                 pullToRefresh = (SwipeRefreshLayout) findViewById(R.id.pullToRefresh);
                 pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -177,14 +216,6 @@ public class WifiScreen extends AppCompatActivity {
                         scanWifi();
                         //Refresh işlemini sonlandıran blok.
                         pullToRefresh.setRefreshing(false);
-                    }
-                });
-
-                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
                     }
                 });
             }
@@ -214,7 +245,6 @@ public class WifiScreen extends AppCompatActivity {
                 } else {
                     Toast.makeText(WifiScreen.this, "Couldn't connect ! Please try again !", Toast.LENGTH_LONG).show();
                 }
-
             }
 
             class WifiReceiver extends BroadcastReceiver {
@@ -222,6 +252,7 @@ public class WifiScreen extends AppCompatActivity {
 
                     List<ScanResult> wifiList;
                     wifiList = wifiManager.getScanResults();
+                    WifiScreen wifiScreen = new WifiScreen();
 
                     //Wifi Sonuçlarının bir liste halinde depolanmasını sağlayan blok ---------------------------------------------------------------------------
                     StringBuilder networks_ssid = new StringBuilder();
@@ -295,5 +326,14 @@ public class WifiScreen extends AppCompatActivity {
                 }
                 return true;
             }
+
+            public void controlConfigured(List<Item> wifiAddresses){
+        for(int i = 0 ; i< wifiAddresses.size(); i++){
+            if(wifiManager.getConfiguredNetworks().get(i).SSID.equalsIgnoreCase(wifiAddresses.get(i).getSsid())){
+                wifiManager.removeNetwork(i);
+            }
+        }
+            }
+
         }
 

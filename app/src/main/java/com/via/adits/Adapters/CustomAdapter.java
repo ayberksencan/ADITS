@@ -101,4 +101,15 @@ public class CustomAdapter extends BaseAdapter {
         connected.setVisibility(View.VISIBLE);
     }
 
+    public String getSsid(int position){
+        View convertView = mInflater.inflate(R.layout.row, null);
+
+        TextView ssid = (TextView) convertView.findViewById(R.id.ssid);
+
+        //Creating an Item object.
+        Item item = mItemList.get(position);
+        String ssid1 = item.getSsid().substring(6);
+        return ssid1;
+    }
+
 }
