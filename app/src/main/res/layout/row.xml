@@ -7,10 +7,11 @@
     android:layout_margin="30dp"
     android:background="@drawable/button_bg"
     android:orientation="horizontal"
-    android:paddingBottom="16dp"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp"
-    android:paddingTop="16dp"
+    android:padding="16dp"
+    android:layout_marginTop="5dp"
+    android:layout_marginBottom="5dp"
+    android:layout_marginStart="5dp"
+    android:layout_marginEnd="5dp"
     android:radius="15dp"
     >
 
@@ -56,7 +57,7 @@
             android:text="@string/connected"
             android:textColor="@color/Green"
             android:textSize="12sp"
-            android:visibility="gone"/>
+            android:visibility="invisible"/>
 
 
     </LinearLayout>
@@ -66,10 +67,10 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:fontFamily="sans-serif-condensed-medium"
-        android:gravity="center_vertical"
-        android:layout_weight="0.2"
+        android:gravity="center"
+        android:layout_weight="0.10"
         android:textAlignment="center"
-        android:textColor="@color/Green"
+        android:textColor="@color/DarkBlue"
         android:textSize="50sp"
         android:textStyle="bold" />
 

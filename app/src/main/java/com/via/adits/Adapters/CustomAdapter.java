@@ -1,4 +1,4 @@
-package com.via.adits.FunctionalUses;
+package com.via.adits.Adapters;
 //Author: Ömer Ayberk ŞENCAN
 //Position: Intern
 //Company: Via Computer Systems Limited Company
@@ -11,6 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+
+import com.via.adits.FunctionalUses.Item;
 import com.via.adits.R;
 import java.util.List;
 
@@ -45,6 +47,7 @@ public class CustomAdapter extends BaseAdapter {
     }
 
     //Returns items view.
+    @SuppressLint("ViewHolder")
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
@@ -56,7 +59,6 @@ public class CustomAdapter extends BaseAdapter {
         TextView tvBssid = (TextView) convertView.findViewById(R.id.mac);
         TextView tvRssi = (TextView) convertView.findViewById(R.id.dbm);
         TextView signalP = (TextView) convertView.findViewById(R.id.signal);
-        TextView connected = (TextView) convertView.findViewById(R.id.connected);
 
         //Creating an Item object.
         Item item = mItemList.get(position);
@@ -66,7 +68,6 @@ public class CustomAdapter extends BaseAdapter {
         tvBssid.setText(item.getBssid());
         tvRssi.setText(item.getRssi());
         signalP.setText(item.getSignalP());
-        connected.setText(item.getConnected());
 
         //Calculating signal rate as percentage and storing it.
         signalP.setText(item.getSignalP());
@@ -74,11 +75,12 @@ public class CustomAdapter extends BaseAdapter {
         return convertView;
     }
 
-    public void setConnected(int position, View convertView, ViewGroup parent){
+    public void setConnected(int position){
         //View initialized.
-        convertView = mInflater.inflate(R.layout.row, null);
+        View convertView = mInflater.inflate(R.layout.row, null);
 
         TextView connected = (TextView) convertView.findViewById(R.id.connected);
+        connected.setText("Connected");
 
         //Creating an Item object.
         Item item = mItemList.get(position);
@@ -86,9 +88,9 @@ public class CustomAdapter extends BaseAdapter {
     }
 
     @SuppressLint("ResourceAsColor")
-    public void setDisconnected(int position, View convertView, ViewGroup parent){
+    public void setDisconnected(int position){
         //View initialized.
-        convertView = mInflater.inflate(R.layout.row, null);
+        View convertView = mInflater.inflate(R.layout.row, null);
 
         TextView connected = (TextView) convertView.findViewById(R.id.connected);
 

@@ -14,17 +14,13 @@ public class JsonClass extends AsyncTask<Void, Void, Void> {
     String Age;
     String Health;
     Integer Level;
-    Context Context;
     int flag;
 
-    public boolean sendData(String name, String tcId, String age, String health, Integer level, Context context){
+    public void sendData(String name, String tcId, String age, String health, Integer level){
         Name = name;
         TcId = tcId;
         Age = age;
         Health = health;
-        Context = context;
-        new JsonClass().execute();
-        return true;
     }
 
     public Integer calculateLevel(String age, String health, Context c){
@@ -72,6 +68,7 @@ public class JsonClass extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... voids) {
+        flag = 0;
         try {
             Jsoup.connect("http://192.168.4.1/buffer").data("u_name", String.valueOf(Name)).data("u_tcno", String.valueOf(TcId)).data("u_age", String.valueOf(Age)).data("u_healts", String.valueOf(Health)).data("u_level", String.valueOf(Level)).post();
             flag = 1;
@@ -82,7 +79,7 @@ public class JsonClass extends AsyncTask<Void, Void, Void> {
         return null;
     }
 
-    public int flag (){
+    public int getFlag (){
         return flag;
     }
 }

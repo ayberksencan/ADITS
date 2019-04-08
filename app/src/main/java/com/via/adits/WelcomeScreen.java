@@ -10,7 +10,10 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.net.wifi.WifiConfiguration;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -71,6 +74,7 @@ public class WelcomeScreen extends AppCompatActivity{
         final EditText tcInput = (EditText) findViewById(R.id.tc_input);
         final EditText ageInput = (EditText) findViewById(R.id.age_input);
         Button submitButton = (Button) findViewById(R.id.submitBtn);
+        WifiManager wifiManager = (WifiManager) getBaseContext().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 
         //Getting the instance of Spinner and applying OnItemSelectedListener on it
         final Spinner healthInput = (Spinner) findViewById(R.id.health_input);
@@ -101,24 +105,27 @@ public class WelcomeScreen extends AppCompatActivity{
 
                 if(!nameBoolean && !tcBoolean && !ageBoolean && !healthBoolean){
                     if (controller.isConnected(WelcomeScreen.this)){
-                        //CONFİGURATİON BURADA KONTROL EDİLECEK ! UNUTMA ! 05/04/2019 - 17:59 Cuma Burada Kaldın !
-                        WifiConfiguration conf = controller.getConf(WelcomeScreen.this);
-                        controller.deleteNetwork(conf, WelcomeScreen.this);
-                        controller.connectWifi(conf,WelcomeScreen.this);
-                        String name = nameInput.getText().toString();
-                        String tc = tcInput.getText().toString();
-                        String age = ageInput.getText().toString();
-                        String health = healtInfo;
-                        Integer level = json.calculateLevel(age, health, WelcomeScreen.this);
-                        int flag = json.flag();
-                        json.sendData(name, tc, age, health, level, WelcomeScreen.this);
-                        if(flag == 1){
-                            showMessage("Data has been updated successfully !");
+                            WifiConfiguration conf = getConf();
+                            controlNetwork(conf, WelcomeScreen.this);
+                            assert nameInput != null;
+                            String name = nameInput.getText().toString();
+                            assert tcInput != null;
+                            String tc = tcInput.getText().toString();
+                            assert ageInput != null;
+                            String age = ageInput.getText().toString();
+                            String health = healtInfo;
+                            Integer level = json.calculateLevel(age, health, WelcomeScreen.this);
+                            json.sendData(name, tc, age, health, level);
+                            new JsonClass().execute();
+                            sleep(500);
+                            int flag = json.getFlag();
+                            if(flag == 1){
+                                showMessage("Data has been updated successfully !");
+                            }
+                            else{showMessage("Data couldn't updated, please be sure your are connected to adits !");}
                         }
-                        else{showMessage("Data couldn't updated, please be sure your are connected to adits !");}
                     }
                 }
-            }
         });
 
 
@@ -140,7 +147,7 @@ public class WelcomeScreen extends AppCompatActivity{
             }
             @Override
             public View getDropDownView(int position, View convertView,
-                                        ViewGroup parent) {
+                                        @NonNull ViewGroup parent) {
                 View view = super.getDropDownView(position, convertView, parent);
                 TextView tv = (TextView) view;
                 if(position == 0){
@@ -207,4 +214,52 @@ public class WelcomeScreen extends AppCompatActivity{
     public void showMessage(String message){
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
+
+    public WifiConfiguration getConf(){
+        WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        WifiConfiguration conf = new WifiConfiguration();
+        for(int i = 0; i<wifiManager.getConfiguredNetworks().size(); i++){
+            if (wifiManager.getConnectionInfo().getSSID().equals(wifiManager.getConfiguredNetworks().get(i).SSID)){
+                conf.SSID = wifiManager.getConfiguredNetworks().get(i).SSID;
+                conf.preSharedKey = wifiManager.getConfiguredNetworks().get(i).preSharedKey;
+            }
+        }
+        return conf;
+    }
+
+
+    public void controlNetwork(WifiConfiguration config, Context context){
+        WifiConfiguration conf = new WifiConfiguration();
+        WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+
+        //Fragment'dan alınan bilgilerin konfigürasyonlarının yapıldığı blok.
+        conf.SSID = "\"" + config.SSID + "\"";
+        conf.preSharedKey = "\"" + config.preSharedKey + "\"";
+
+        //Verilen bilgilere göre ağa bağlanma isteğini gönderen ve bağlanma işlemini gerçekleştiren blok.
+        int netId = wifiManager.addNetwork(conf);
+        if (netId != -1) {
+            wifiManager.enableNetwork(netId, true);
+            wifiManager.saveConfiguration();
+        }
+        else{
+            for(int i = 0; i<wifiManager.getConfiguredNetworks().size(); i++){
+                if(conf.SSID.equals(wifiManager.getConfiguredNetworks().get(i).SSID)){
+                    wifiManager.getConfiguredNetworks().remove(i);
+                    netId = wifiManager.addNetwork(conf);
+                    wifiManager.saveConfiguration();
+                }
+            }
+        }
+    }
+
+    public void sleep(int time){
+        try{
+            Thread.sleep(time);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
 }

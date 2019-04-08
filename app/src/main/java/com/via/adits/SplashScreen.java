@@ -69,18 +69,16 @@ public class SplashScreen extends AppCompatActivity {
                 finish();
 
 
-                //Eğer uygulama ilk kez açıldıysa SliderRegisterRegister'i aç.
+                //If the app runned for first time open WelcomeScreen
                 SharedPreferences prefs = getSharedPreferences("prefs",MODE_PRIVATE);
                 if (prefs.getBoolean("firstrun", true)) {
-                    //İlk Çalışmada Yapılacak İşlemler Bu Kısımda Belirtilir.
-                    //Sonrasında ise ilk çalışma bölümü "False" olarak set edilir.
                     prefs.edit().putBoolean("firstrun", false).apply();
-                    startActivity(new Intent(getApplicationContext(), WelcomeScreen.class));
+                    startActivity(new Intent(getApplicationContext(), WifiScreen.class));
                     finish();
                 }
-                //Yoksa WifiActivity'i aç.
+                //Else open WifiScreen.
                 else {
-                    startActivity(new Intent(getApplicationContext() , WelcomeScreen.class));
+                    startActivity(new Intent(getApplicationContext() , WifiScreen.class));
                     finish();
                 }
             }

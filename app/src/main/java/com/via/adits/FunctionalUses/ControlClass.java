@@ -19,7 +19,6 @@ import java.util.List;
 
 public class ControlClass extends AppCompatActivity {
 
-    WifiConfiguration conf = new WifiConfiguration();
     public static final int REQUEST_ID_MULTIPLE_PERMISSIONS = 1;
     List<String> listPermissionsNeeded = new ArrayList<>();
     ControlClass controlClass;
@@ -86,60 +85,6 @@ public class ControlClass extends AppCompatActivity {
     public void showMessage(String s, Context c){
         Toast.makeText(c, s, Toast.LENGTH_LONG).show();
     }
-
-
-    //This function controls if the given network conf has already registered to configured networks
-    //If so, deletes the old one and saves the new one.
-    public int deleteNetwork(WifiConfiguration conf, Context context){
-
-        int networkConfiguration = 0;
-
-        WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-
-        assert wifiManager != null;
-        for(int i = 0; i<wifiManager.getConfiguredNetworks().size(); i++){
-            if(conf.SSID.equals(wifiManager.getConfiguredNetworks().get(i).SSID)){
-                wifiManager.getConfiguredNetworks().remove(i);
-                networkConfiguration = wifiManager.addNetwork(conf);
-                wifiManager.saveConfiguration();
-            }
-        }
-        return networkConfiguration;
-    }
-
-
-    public WifiConfiguration getConf(Context c){
-
-        WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        assert wifiManager != null;
-        for(int i = 0; i<wifiManager.getConfiguredNetworks().size(); i++){
-            if (wifiManager.getConnectionInfo().getSSID().equals(wifiManager.getConfiguredNetworks().get(i).SSID)){
-                conf.SSID = wifiManager.getConfiguredNetworks().get(i).SSID;
-                conf.preSharedKey = wifiManager.getConfiguredNetworks().get(i).preSharedKey;
-            }
-        }
-        return conf;
-    }
-
-
-
-       //Will be opened
-    public void connectWifi(WifiConfiguration conf, Context c){
-
-        WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-        wifiManager.disconnect();
-        int netId = wifiManager.addNetwork(conf);
-        wifiManager.saveConfiguration();
-        wifiManager.enableNetwork(netId, true);
-        wifiManager.reconnect();
-    }
-
-    public void disconnectWifi(Context c){
-        WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        wifiManager.disconnect();
-    }
-
-
 
 
     public boolean isAdits(Context context){

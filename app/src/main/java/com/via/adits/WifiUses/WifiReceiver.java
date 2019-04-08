@@ -1,20 +1,19 @@
 package com.via.adits.WifiUses;
-
+/*
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
-
 import com.via.adits.FunctionalUses.ControlClass;
 import com.via.adits.FunctionalUses.Item;
-
+import com.via.adits.WifiScreen;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-/*
+
 public class WifiReceiver extends BroadcastReceiver {
 
     public ArrayList<Item> itemList;
@@ -22,13 +21,13 @@ public class WifiReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        WifiReceiver wifiReceiver = new WifiReceiver();
-
         //A controller object has been created to control progress through the activity.
-        ControlClass controller = new ControlClass(null, null, wifiReceiver, null, null);
+        ControlClass controller = new ControlClass();
+
+        WifiScreen wifiScreen = new WifiScreen();
 
             List<ScanResult> wifiList;
-            wifiList = controller.getWifiManager().getScanResults();
+            wifiList = WifiScreen.getResult();
 
         //Initializing the StringBuilders to store ScanResults.
         StringBuilder networks_ssid = new StringBuilder();
@@ -66,17 +65,16 @@ public class WifiReceiver extends BroadcastReceiver {
             }
         }
 
-        //RSSI(DBM) Değerlerine göre sonuçları sıralayan fonksiyon
         Collections.sort(itemList, new Comparator<Item>() {
             @Override
             public int compare(Item o1, Item o2) {
                 return o1.getRssi().compareToIgnoreCase(o2.getRssi());
             }
         });
+
     }
 
     public ArrayList<Item> getItemList(){
         return itemList;
     }
-}
-*/
+}*/

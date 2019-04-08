@@ -6,12 +6,7 @@ public class Item {
     private String rssi;
     private String bssid;
     private String signalP;
-    private String connected;
 
-
-    public void setBssid(String linkSpeed) {
-        this.bssid = linkSpeed;
-    }
 
     //Sınıftan bilgileri dışa aktaran fonksiyonların bulunduğu blok.
     public String getSsid() {
@@ -29,7 +24,6 @@ public class Item {
     public String getSignalP(){
         return signalP;
     }
-    public String getConnected(){return connected;}
 
     //Sınıftaki bilgilerin düzenlenmesini sağlayan fonksiyonların bulunduğu blok.
     public void setRssi(String rssi) {
@@ -43,17 +37,16 @@ public class Item {
 
 
     //Item Sınıfından bir nesne oluşturulmasını sağlayan fonksiyon.
-    public Item(String ssid, String bssid, String rssi, String signalP, String connected) {
+    public Item(String ssid, String bssid, String rssi, String signalP) {
         this.ssid = ssid;
         this.bssid = bssid;
         this.rssi = rssi;
         this.signalP = signalP;
-        this.connected = connected;
     }
 
     //Değerlerin String formatına dönüştürülmesini sağlayan fonksiyon.
     @Override
     public String toString() {
-        return ssid + bssid + rssi + signalP + connected;
+        return ssid + bssid + rssi + signalP;
     }
 }

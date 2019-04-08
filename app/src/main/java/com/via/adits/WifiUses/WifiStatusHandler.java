@@ -6,15 +6,9 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.Message;
-import android.view.View;
-
 import com.via.adits.FunctionalUses.ControlClass;
-import com.via.adits.FunctionalUses.CustomAdapter;
-import com.via.adits.FunctionalUses.Item;
-import com.via.adits.SplashScreen;
 import com.via.adits.WifiScreen;
 
-import java.util.ArrayList;
 
 public class WifiStatusHandler extends Handler {
 
@@ -22,8 +16,6 @@ public class WifiStatusHandler extends Handler {
     WifiManager mainWifi;
     public Context context;
 
-    public WifiStatusHandler() {
-    }
 
     WifiStatusHandler wifiStatusHandler;
 
@@ -40,7 +32,8 @@ public class WifiStatusHandler extends Handler {
 
             ControlClass controller = new ControlClass();
             //Wifi information variables has been defined and initialized.
-            mainWifi = controller.getWifiManager();
+            WifiManager mainWifi = (WifiManager) c.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+            WifiScreen wifiScreen = new WifiScreen();
             int curWifiState = mainWifi.getWifiState();
             SupplicantState info = mainWifi.getConnectionInfo().getSupplicantState();
             final WifiInfo curWifi = mainWifi.getConnectionInfo();
@@ -50,28 +43,21 @@ public class WifiStatusHandler extends Handler {
 
                 //In case of scanning.
                 case "SCANNING":
-                    controller.showMessage("Ağ bağlantısı kayboldu, lütfen tekrar deneyiniz !",c);
-                    stop();
+
                     break;
 
                 //In case of connecting.
                 case "FOUR_WAY_HANDSHAKE":
-                    controller.showMessage("Connecting to" + curWifi.getSSID(),c);
+
                     break;
 
                 //In case of connected.
                 case "COMPLETED":
-                    ArrayList<Item> itemList = wifiReceiver.getItemList();
-                    CustomAdapter adapter = wifiScreen.getAdapter();
-                    View convertView = wifiScreen.getConvertView();
-                    controller.showConnected(mainWifi.getConnectionInfo().getSSID(), adapter, convertView);
+
                     break;
                 //In case of disconnected.
                 case "DISCONNECTED":
-                    ArrayList<Item> itemList1 = wifiReceiver.getItemList();
-                    CustomAdapter adapter1 = wifiScreen.getAdapter();
-                    View convertView1 = wifiScreen.getConvertView();
-                    controller.showDisconnected(mainWifi.getConnectionInfo().getSSID(), adapter1, convertView1);
+
                     break;
             }
         }
@@ -80,5 +66,4 @@ public class WifiStatusHandler extends Handler {
     public synchronized void stop() {
         running = false;
     }
-}
-*/
+}*/
