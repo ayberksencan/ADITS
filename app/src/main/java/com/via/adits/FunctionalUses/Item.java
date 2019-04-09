@@ -6,6 +6,7 @@ public class Item {
     private String rssi;
     private String bssid;
     private String signalP;
+    private String connected;
 
 
     //Sınıftan bilgileri dışa aktaran fonksiyonların bulunduğu blok.
@@ -25,6 +26,10 @@ public class Item {
         return signalP;
     }
 
+    public String getConnected(){
+        return connected;
+    }
+
     //Sınıftaki bilgilerin düzenlenmesini sağlayan fonksiyonların bulunduğu blok.
     public void setRssi(String rssi) {
         this.rssi = rssi;
@@ -37,11 +42,12 @@ public class Item {
 
 
     //Item Sınıfından bir nesne oluşturulmasını sağlayan fonksiyon.
-    public Item(String ssid, String bssid, String rssi, String signalP) {
+    public Item(String ssid, String bssid, String rssi, String signalP, String connected) {
         this.ssid = ssid;
         this.bssid = bssid;
         this.rssi = rssi;
         this.signalP = signalP;
+        this.connected = connected;
     }
 
     //Değerlerin String formatına dönüştürülmesini sağlayan fonksiyon.

@@ -39,16 +39,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.via.adits.Adapters.CustomAdapter;
 import com.via.adits.FunctionalUses.Item;
+
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 import static com.via.adits.FunctionalUses.ControlClass.REQUEST_ID_MULTIPLE_PERMISSIONS;
+import static com.via.adits.R.color.colorRed;
 
 public class WifiScreen extends AppCompatActivity {
 
-    ListView listView;
+    public ListView listView;
     List<Item> wifiAddresses;
     SwipeRefreshLayout pullToRefresh;
     CustomAdapter wifiAdapter;
@@ -155,7 +159,7 @@ public class WifiScreen extends AppCompatActivity {
         }
 
 
-            wifiList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        wifiList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -164,17 +168,22 @@ public class WifiScreen extends AppCompatActivity {
                 Animation animation1 = new AlphaAnimation(0.3f, 1.0f);
                 animation1.setDuration(650);
                 view.startAnimation(animation1);
-                try{
+                try {
                     Thread.sleep(500);
-                }
-                catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 //ListView'de seçili olan item'ın pozisyonunu depolayan değişken. (con_pos) [Daha sonra kullanılacak]
                 con_pos = position;
 
                 String ssid = wifiAddresses.get(con_pos).getSsid();
-                String key = "12345678";
+                String key = null;
+                if(ssid.contains("00")){
+                    key = "12345678";
+                }
+                else{
+                    key = "viA.Via_2018";
+                }
 
                 WifiConfiguration wifiConfig = new WifiConfiguration();
                 wifiConfig.SSID = String.format("\"%s\"", ssid);
@@ -184,156 +193,170 @@ public class WifiScreen extends AppCompatActivity {
                 wifiManager.enableNetwork(netId, true);
                 wifiManager.reconnect();
 
-                if (wifiManager.getConnectionInfo().getSupplicantState().toString().equalsIgnoreCase("completed")){
-                    if (wifiManager.getConnectionInfo().getSSID().equalsIgnoreCase(ssid)){
-                        // BURADA KALDIN !
+                if (wifiManager.getConnectionInfo().getSupplicantState().toString().equalsIgnoreCase("completed")) {
+                    if (wifiManager.getConnectionInfo().getSSID().equalsIgnoreCase(ssid)) {
+                        customAdapter.setConnected(con_pos, WifiScreen.this);
+                        displayMessage("Connected to : " + wifiManager.getConnectionInfo().getSSID());
                     }
+                } else {
+                    customAdapter.setDisconnected(con_pos, WifiScreen.this);
                 }
-                else{
-                    customAdapter.setDisconnected(con_pos);
-                }
-
-
 
             }
         });
 
-                pullToRefresh = (SwipeRefreshLayout) findViewById(R.id.pullToRefresh);
-                pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-                    @Override
-                    public void onRefresh() {
-                        progressDialog1.show();
-                        progressDialog1.setMessage("Refreshing...");
-                        progressDialog1.setCancelable(false);
-                        scanWifi();
-                        final Handler handler = new Handler();
-                        handler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                progressDialog1.dismiss();
-                            }
-                        }, 1500);
-                        scanWifi();
-                        //Refresh işlemini sonlandıran blok.
-                        pullToRefresh.setRefreshing(false);
-                    }
-                });
-            }
-
-            public void scanWifi () {
+        pullToRefresh = (SwipeRefreshLayout) findViewById(R.id.pullToRefresh);
+        pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                progressDialog1.show();
+                progressDialog1.setMessage("Refreshing...");
+                progressDialog1.setCancelable(false);
+                scanWifi();
                 final Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        // TODO Auto-generated method stub
-                        receiverWifi = new WifiReceiver();
-                        registerReceiver(receiverWifi, new IntentFilter(
-                                WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
-                        wifiManager.startScan();
+                        progressDialog1.dismiss();
                     }
-                }, 0);
+                }, 1500);
+                scanWifi();
+                //Refresh işlemini sonlandıran blok.
+                pullToRefresh.setRefreshing(false);
+            }
+        });
+    }
+
+    public void scanWifi() {
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // TODO Auto-generated method stub
+                receiverWifi = new WifiReceiver();
+                registerReceiver(receiverWifi, new IntentFilter(
+                        WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+                wifiManager.startScan();
+            }
+        }, 0);
+    }
+
+    public void Connect(String ssid, String password) {
+        WifiConfiguration conf = new WifiConfiguration();
+        conf.SSID = "\"" + ssid + "\"";
+        conf.preSharedKey = "\"" + password + "\"";
+
+        int netId = wifiManager.addNetwork(conf);
+        if (netId != -1) {
+            wifiManager.enableNetwork(netId, true);
+        } else {
+            Toast.makeText(WifiScreen.this, "Couldn't connect ! Please try again !", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    class WifiReceiver extends BroadcastReceiver {
+        public void onReceive(Context c, Intent intent) {
+
+            List<ScanResult> wifiList;
+            wifiList = wifiManager.getScanResults();
+            WifiScreen wifiScreen = new WifiScreen();
+
+            //Wifi Sonuçlarının bir liste halinde depolanmasını sağlayan blok ---------------------------------------------------------------------------
+            StringBuilder networks_ssid = new StringBuilder();
+            StringBuilder networks_bssid = new StringBuilder();
+            StringBuilder networks_rssi = new StringBuilder();
+            StringBuilder networks_sp = new StringBuilder();
+            int strengthInPercentage = 0;
+
+            for (int i = 0; i < wifiList.size(); i++) {
+                //Bulunan ağların bilgilerini bir StringBuilder'a aktaran blok
+                networks_ssid.append(",SSID: ").append(wifiList.get(i).SSID);
+                networks_bssid.append(",BSSID: ").append(wifiList.get(i).BSSID);
+                networks_rssi.append(",RSSI: ").append(wifiList.get(i).level).append(" dBm");
+                strengthInPercentage = WifiManager.calculateSignalLevel(wifiList.get(i).level, 100);
+                networks_sp.append(",").append(strengthInPercentage);
             }
 
-            public void Connect (String ssid, String password){
-                WifiConfiguration conf = new WifiConfiguration();
-                conf.SSID = "\"" + ssid + "\"";
-                conf.preSharedKey = "\"" + password + "\"";
+            //Aktarılan bilgileri "," e göre ayıran yani her bi ağın bilgilerinin birbirinden ayrılmasını
+            //sağlayan blok.
+            String[] aSSid = networks_ssid.toString().split(",");
+            String[] aBssid = networks_bssid.toString().split(",");
+            String[] aRssi = networks_rssi.toString().split(",");
+            String[] aSp = networks_sp.toString().split(",");
 
-                int netId = wifiManager.addNetwork(conf);
-                if (netId != -1) {
-                    wifiManager.enableNetwork(netId, true);
-                } else {
-                    Toast.makeText(WifiScreen.this, "Couldn't connect ! Please try again !", Toast.LENGTH_LONG).show();
+
+            //Bulunan sonuçların bir ArrayList'te depolanmasını sağlayan blok
+            //(ArrayList kullanma amacımız verileri ListView üzerinde gösterebilmek)
+            wifiAddresses = new ArrayList<>();
+            for (int i = 1; i <= wifiList.size(); i++) {
+                //Wifi Filter İşlemini gerçekleştiren fonksiyon (Wifi Filtresi)
+                if (aSSid[i].toLowerCase().contains("via") || aSSid[i].contains("ADITS")) {
+                    wifiAddresses.add(new Item(aSSid[i], aBssid[i], aRssi[i], aSp[i], ""));
                 }
             }
 
-            class WifiReceiver extends BroadcastReceiver {
-                public void onReceive(Context c, Intent intent) {
+            //Kaç Adet Wifi Bulunduğunu Listeleyen Fonksiyon
+            displayMessage("Bulunan Wifi Sayısı: " + wifiAddresses.size());
 
-                    List<ScanResult> wifiList;
-                    wifiList = wifiManager.getScanResults();
-                    WifiScreen wifiScreen = new WifiScreen();
-
-                    //Wifi Sonuçlarının bir liste halinde depolanmasını sağlayan blok ---------------------------------------------------------------------------
-                    StringBuilder networks_ssid = new StringBuilder();
-                    StringBuilder networks_bssid = new StringBuilder();
-                    StringBuilder networks_rssi = new StringBuilder();
-                    StringBuilder networks_sp = new StringBuilder();
-                    int strengthInPercentage = 0;
-
-                    for (int i = 0; i < wifiList.size(); i++) {
-                        //Bulunan ağların bilgilerini bir StringBuilder'a aktaran blok
-                        networks_ssid.append(",SSID: ").append(wifiList.get(i).SSID);
-                        networks_bssid.append(",BSSID: ").append(wifiList.get(i).BSSID);
-                        networks_rssi.append(",RSSI: ").append(wifiList.get(i).level).append(" dBm");
-                        strengthInPercentage = WifiManager.calculateSignalLevel(wifiList.get(i).level, 100);
-                        networks_sp.append(",").append(strengthInPercentage);
-                    }
-
-                    //Aktarılan bilgileri "," e göre ayıran yani her bi ağın bilgilerinin birbirinden ayrılmasını
-                    //sağlayan blok.
-                    String[] aSSid = networks_ssid.toString().split(",");
-                    String[] aBssid = networks_bssid.toString().split(",");
-                    String[] aRssi = networks_rssi.toString().split(",");
-                    String[] aSp = networks_sp.toString().split(",");
-
-
-                    //Bulunan sonuçların bir ArrayList'te depolanmasını sağlayan blok
-                    //(ArrayList kullanma amacımız verileri ListView üzerinde gösterebilmek)
-                    wifiAddresses = new ArrayList<>();
-                    for (int i = 1; i <= wifiList.size(); i++) {
-                        //Wifi Filter İşlemini gerçekleştiren fonksiyon (Wifi Filtresi)
-                        if (aSSid[i].toLowerCase().contains("via") || aSSid[i].contains("ADITS")) {
-                            wifiAddresses.add(new Item(aSSid[i], aBssid[i], aRssi[i], aSp[i]));
-                        }
-                    }
-
-                    //Kaç Adet Wifi Bulunduğunu Listeleyen Fonksiyon
-                    displayMessage("Bulunan Wifi Sayısı: " + wifiAddresses.size());
-
-                    //RSSI(DBM) Değerlerine göre sonuçları sıralayan fonksiyon
-                    Collections.sort(wifiAddresses, new Comparator<Item>() {
-                        @Override
-                        public int compare(Item o1, Item o2) {
-                            return o1.getRssi().compareToIgnoreCase(o2.getRssi());
-                        }
-                    });
-
-                    CustomAdapter customAdapter = new CustomAdapter(WifiScreen.this, wifiAddresses);
-                    listView.setAdapter(customAdapter);
+            //RSSI(DBM) Değerlerine göre sonuçları sıralayan fonksiyon
+            Collections.sort(wifiAddresses, new Comparator<Item>() {
+                @Override
+                public int compare(Item o1, Item o2) {
+                    return o1.getRssi().compareToIgnoreCase(o2.getRssi());
                 }
-            }
+            });
 
-            //Ekranda Mesajları görüntülemek için kullanılan blok ---------------------------------------------------------------------------------------------------
-            public void displayMessage (String message){
-                Toast.makeText(WifiScreen.this, message, Toast.LENGTH_SHORT).show();
-            }
+            CustomAdapter customAdapter = new CustomAdapter(WifiScreen.this, wifiAddresses);
+            listView.setAdapter(customAdapter);
+        }
+    }
 
-            private boolean checkAndRequestPermissions () {
-                final int permissionAccessCoarseLocation = ContextCompat.checkSelfPermission(this,
-                        Manifest.permission.ACCESS_COARSE_LOCATION);
-                List<String> listPermissionsNeeded = new ArrayList<>();
+    //Ekranda Mesajları görüntülemek için kullanılan blok ---------------------------------------------------------------------------------------------------
+    public void displayMessage(String message) {
+        Toast.makeText(WifiScreen.this, message, Toast.LENGTH_SHORT).show();
+    }
 
-                //Lokasyon izninin varlığını kontrol eden blok.
-                if (permissionAccessCoarseLocation != PackageManager.PERMISSION_GRANTED) {
-                    listPermissionsNeeded.add(Manifest.permission.ACCESS_COARSE_LOCATION);
-                }
-                //Diğer izinlerin varlığını kontrol eden yoksa izin isteyen blok.
-                if (!listPermissionsNeeded.isEmpty()) {
-                    ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), REQUEST_ID_MULTIPLE_PERMISSIONS);
-                    displayMessage("Please Refresh!");
-                    return false;
-                }
-                return true;
-            }
+    private boolean checkAndRequestPermissions() {
+        final int permissionAccessCoarseLocation = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_COARSE_LOCATION);
+        List<String> listPermissionsNeeded = new ArrayList<>();
 
-            public void controlConfigured(List<Item> wifiAddresses){
-        for(int i = 0 ; i< wifiAddresses.size(); i++){
-            if(wifiManager.getConfiguredNetworks().get(i).SSID.equalsIgnoreCase(wifiAddresses.get(i).getSsid())){
+        //Lokasyon izninin varlığını kontrol eden blok.
+        if (permissionAccessCoarseLocation != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.ACCESS_COARSE_LOCATION);
+        }
+        //Diğer izinlerin varlığını kontrol eden yoksa izin isteyen blok.
+        if (!listPermissionsNeeded.isEmpty()) {
+            ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), REQUEST_ID_MULTIPLE_PERMISSIONS);
+            displayMessage("Please Refresh!");
+            return false;
+        }
+        return true;
+    }
+
+    public void controlConfigured(List<Item> wifiAddresses) {
+        for (int i = 0; i < wifiAddresses.size(); i++) {
+            if (wifiManager.getConfiguredNetworks().get(i).SSID.equalsIgnoreCase(wifiAddresses.get(i).getSsid())) {
                 wifiManager.removeNetwork(i);
             }
         }
-            }
+    }
 
-        }
+    public void setConnected(int position){
+        View v = listView.getChildAt(position);
+        if(v == null){return;}
+        TextView Connected =  (TextView) findViewById(R.id.connected);
+        Connected.setText("Connected");
+    }
+
+    @androidx.annotation.RequiresApi(api = Build.VERSION_CODES.M)
+    public void setDisconnected(int position){
+        View v = listView.getChildAt(position);
+        if (v == null){return;}
+        TextView connected = (TextView) findViewById(R.id.connected);
+        connected.setText("Disconnected");
+        connected.setTextColor(getColor(R.color.colorRed));
+    }
+
+}
 

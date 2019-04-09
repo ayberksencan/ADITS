@@ -14,6 +14,9 @@ import android.widget.TextView;
 
 import com.via.adits.FunctionalUses.Item;
 import com.via.adits.R;
+
+import org.w3c.dom.Text;
+
 import java.util.List;
 
 import static com.via.adits.R.color.*;
@@ -59,6 +62,7 @@ public class CustomAdapter extends BaseAdapter {
         TextView tvBssid = (TextView) convertView.findViewById(R.id.mac);
         TextView tvRssi = (TextView) convertView.findViewById(R.id.dbm);
         TextView signalP = (TextView) convertView.findViewById(R.id.signal);
+        TextView connected = (TextView) convertView.findViewById(R.id.connected);
 
         //Creating an Item object.
         Item item = mItemList.get(position);
@@ -68,6 +72,7 @@ public class CustomAdapter extends BaseAdapter {
         tvBssid.setText(item.getBssid());
         tvRssi.setText(item.getRssi());
         signalP.setText(item.getSignalP());
+        connected.setText(item.getConnected());
 
         //Calculating signal rate as percentage and storing it.
         signalP.setText(item.getSignalP());
@@ -75,7 +80,7 @@ public class CustomAdapter extends BaseAdapter {
         return convertView;
     }
 
-    public void setConnected(int position){
+    public void setConnected(int position, Context context){
         //View initialized.
         View convertView = mInflater.inflate(R.layout.row, null);
 
@@ -88,7 +93,7 @@ public class CustomAdapter extends BaseAdapter {
     }
 
     @SuppressLint("ResourceAsColor")
-    public void setDisconnected(int position){
+    public void setDisconnected(int position, Context context){
         //View initialized.
         View convertView = mInflater.inflate(R.layout.row, null);
 
