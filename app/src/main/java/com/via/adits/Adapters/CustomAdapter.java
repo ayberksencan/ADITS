@@ -79,42 +79,4 @@ public class CustomAdapter extends BaseAdapter {
         int myRssi = Integer.parseInt(item.getRssi().replaceAll("[\\D]", ""));
         return convertView;
     }
-
-    public void setConnected(int position, Context context){
-        //View initialized.
-        View convertView = mInflater.inflate(R.layout.row, null);
-
-        TextView connected = (TextView) convertView.findViewById(R.id.connected);
-        connected.setText("Connected");
-
-        //Creating an Item object.
-        Item item = mItemList.get(position);
-        connected.setVisibility(View.VISIBLE);
-    }
-
-    @SuppressLint("ResourceAsColor")
-    public void setDisconnected(int position, Context context){
-        //View initialized.
-        View convertView = mInflater.inflate(R.layout.row, null);
-
-        TextView connected = (TextView) convertView.findViewById(R.id.connected);
-
-        //Creating an Item object.
-        Item item = mItemList.get(position);
-        connected.setText(R.string.disconnected);
-        connected.setTextColor(colorRed);
-        connected.setVisibility(View.VISIBLE);
-    }
-
-    public String getSsid(int position){
-        View convertView = mInflater.inflate(R.layout.row, null);
-
-        TextView ssid = (TextView) convertView.findViewById(R.id.ssid);
-
-        //Creating an Item object.
-        Item item = mItemList.get(position);
-        String ssid1 = item.getSsid().substring(6);
-        return ssid1;
-    }
-
 }

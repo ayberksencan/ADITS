@@ -14,7 +14,7 @@
     <string name="ssid">SSID:</string>
     <string name="dbm">dBm:</string>
     <string name="mac">Mac:</string>
-    <string name="info_text">Found networks has been listed below. Please select one of them to connect and see the personal information !</string>
+    <string name="info_text">Found networks has been listed above. Please select one of them to connect and see the personal information !</string>
     <string name="name2">Name :</string>
     <string name="tc_id">Tc Id:</string>
     <string name="age2">Age :</string>
@@ -28,6 +28,11 @@
     <string name="good">Good</string>
     <string name="Moderate">Moderate</string>
     <string name="Poor">Poor</string>
+    <string name="nameNoData">Name: No Data</string>
+    <string name="tc_id_no_data">Tc Id: No Data</string>
+    <string name="age_no_data">Age: No Data</string>
+    <string name="health_no_data">Health Status: No Data</string>
+    <string name="level_no_data">Level: No Data</string>
     <array name="Health">
         <item>@string/healthStatus</item>
         <item>@string/good</item>

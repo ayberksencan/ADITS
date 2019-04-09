@@ -45,6 +45,7 @@ public class WifiAdapter extends BaseAdapter {
         TextView ssid = (TextView) rowView.findViewById(R.id.ssid);
         TextView bssid = (TextView) rowView.findViewById(R.id.mac);
         TextView dbm = (TextView) rowView.findViewById(R.id.dbm);
+        TextView connected = (TextView) rowView.findViewById(R.id.connected);
 
         final WifiAddress wifiAddress = wifiAddressList.get(position);
 
