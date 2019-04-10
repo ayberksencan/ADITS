@@ -7,15 +7,11 @@ package com.via.adits;
 
 import android.Manifest;
 import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.net.wifi.ScanResult;
-import android.net.wifi.SupplicantState;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
@@ -33,31 +29,22 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.via.adits.Adapters.BilgiAdapter;
 import com.via.adits.Adapters.CustomAdapter;
 import com.via.adits.Adapters.HttpHandler;
 import com.via.adits.FunctionalUses.Item;
-import com.via.adits.FunctionalUses.JsonClass;
 import com.via.adits.FunctionalUses.People;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
 import static com.via.adits.FunctionalUses.ControlClass.REQUEST_ID_MULTIPLE_PERMISSIONS;
-import static com.via.adits.R.color.colorRed;
 
 public class WifiScreen extends AppCompatActivity {
 
@@ -207,9 +194,11 @@ public class WifiScreen extends AppCompatActivity {
             wifiManager.disconnect();
             wifiManager.enableNetwork(netId, true);
             wifiManager.reconnect();
-            //progressDialog("Trying to connect", 3500);
-            ssidConnected = ssid;
-            new getInfo().execute();
+            progressDialog("Trying to connect", 1500);
+            getJsonData();
+            if(nameInfo.getText().equals("Name: Not Found !")){
+                displayMessage("Cannot connect to Json server. Please try again later.");
+            }
         }
         else {
             for(int i = 0 ; i< wifiManager.getConfiguredNetworks().size(); i++){
@@ -218,7 +207,7 @@ public class WifiScreen extends AppCompatActivity {
                     wifiManager.disconnect();
                     wifiManager.enableNetwork(netId, true);
                     wifiManager.reconnect();
-                    //progressDialog("Trying to connect", 3500);
+                    progressDialog("Trying to connect", 3500);
                     ssidConnected = ssid;
                     new getInfo().execute();
                     break;
@@ -238,6 +227,16 @@ public class WifiScreen extends AppCompatActivity {
                 progressDialog1.dismiss();
             }
         }, timeMillis);
+    }
+
+    public void getJsonData(){
+        for (int i = 0 ; i < 20 ; i++){
+            if(wifiManager.getConnectionInfo().getSupplicantState().equals("COMPLETED")){
+                new getInfo().execute();
+            }
+            try{wait(250);}
+            catch (Exception e){e.printStackTrace();}
+        }
     }
 
     public void isPermissionsGet(){
@@ -396,27 +395,39 @@ public class WifiScreen extends AppCompatActivity {
         });
     }
 
+    public void setFound(final String name, final String tcno, final String age, final String health, final String level){
+        runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+                nameInfo.setText("Name: "+ name);
+                tcInfo.setText("Tc Id: "+ tcno);
+                ageInfo.setText("Age: " + age);
+                healthInfo.setText("Health Status: " + health);
+                levelInfo.setText("Level: " + level);
+            }
+        });
+    }
+
     private class getInfo extends AsyncTask<Void, Void, Void> {
 
         ArrayList<People> bilgiArraylist = new ArrayList<>();
         private String server_url = "http://192.168.4.1/json";
 
 
-        //İşlem Başlamadan Önce Yapılacaklar
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
         }
 
 
-        //İşlem Bittikten Sonra Yapılacaklar
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
 
         }
 
-        //İşlem Sırasında Yapılacaklar
         @Override
         protected Void doInBackground(Void... voids) {
 
@@ -426,13 +437,10 @@ public class WifiScreen extends AppCompatActivity {
 
             if(jsonString != null){
 
-                //JSON'dan cevap olarak alınan verilerin Log olarak terminalde gösterildiği blok.
                 Log.d("JSON_RESPONSE", jsonString);
 
                 try{
                     JSONObject jsonObject = new JSONObject(jsonString);
-                    //İnternet adresine bağlanıp, HTML içerisinden People başlıklı JSON
-                    //objelerini çeken blok
                     JSONArray kisiler = jsonObject.getJSONArray("people");
 
                     for(int i = 0; i<kisiler.length(); i++){
@@ -445,11 +453,7 @@ public class WifiScreen extends AppCompatActivity {
                         String Age = kisi.getString("Age");
                         String Health = kisi.getString("Healt Status");
                         String Level = kisi.getString("Level");
-
-                        //People Class'ından yeni bir nesne oluşturarak, JSON tarafından sağlanan
-                        //bilgileri oluşturulan nesnede depolayan blok.
-                        People people = new People(Name,TCNo,Age,Health,Level);
-                        bilgiArraylist.add(people);
+                        setFound(Name, TCNo, Age, Health, Level);
                     }
                 }
                 catch(Exception e){
