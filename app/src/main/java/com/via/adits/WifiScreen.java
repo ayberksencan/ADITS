@@ -112,30 +112,28 @@ public class WifiScreen extends AppCompatActivity {
         wifiAdapter = new CustomAdapter(this, wifiAddresses);
         customAdapter = new CustomAdapter(this, wifiAddresses);
         clickFlag = 0;
+        itemPos = -1;
 
 
         isPermissionsGet();
 
 
         wifiList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @androidx.annotation.RequiresApi(api = Build.VERSION_CODES.M)
-            @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                con_pos = position;
+                Connect(wifiAddresses.get(con_pos).getSsid().substring(6));
+
+                Animation animation1 = new AlphaAnimation(0.3f, 1.0f);
+                animation1.setDuration(650);
+                view.startAnimation(animation1);
+
                 if(flag == 1){
                     setDisconnected(itemPos);
                 }
                 ssidConnected = wifiManager.getConnectionInfo().getSSID();
                 ConnectedView = listView.getChildAt(con_pos).findViewById(R.id.connected);
 
-                Animation animation1 = new AlphaAnimation(0.3f, 1.0f);
-                animation1.setDuration(650);
-                view.startAnimation(animation1);
-
-                //ListView'de seçili olan item'ın pozisyonunu depolayan değişken. (con_pos) [Daha sonra kullanılacak]
-                con_pos = position;
-                Log.d("Ssid Clicked", wifiAddresses.get(con_pos).getSsid());
-                Connect(wifiAddresses.get(con_pos).getSsid().substring(6));
                 setConnected();
                 flag = 1;
                 itemPos = position;
@@ -195,7 +193,6 @@ public class WifiScreen extends AppCompatActivity {
             wifiManager.enableNetwork(netId, true);
             wifiManager.reconnect();
             progressDialog("Trying to connect", 1500);
-            getJsonData();
             if(nameInfo.getText().equals("Name: Not Found !")){
                 displayMessage("Cannot connect to Json server. Please try again later.");
             }
@@ -209,7 +206,6 @@ public class WifiScreen extends AppCompatActivity {
                     wifiManager.reconnect();
                     progressDialog("Trying to connect", 3500);
                     ssidConnected = ssid;
-                    new getInfo().execute();
                     break;
                 }
             }
@@ -321,7 +317,6 @@ public class WifiScreen extends AppCompatActivity {
 
     }
 
-    @androidx.annotation.RequiresApi(api = Build.VERSION_CODES.M)
     public void setDisconnected(int position){
         TextView connected = ConnectedView.findViewById(R.id.connected);
         connected.setVisibility(View.VISIBLE);
