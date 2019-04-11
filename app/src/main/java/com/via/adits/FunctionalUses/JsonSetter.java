@@ -7,7 +7,7 @@ import org.jsoup.Jsoup;
 
 import java.io.IOException;
 
-public class JsonClass extends AsyncTask<Void, Void, Void> {
+public class JsonSetter extends AsyncTask<Void, Void, Void> {
 
     String Name;
     String TcId;

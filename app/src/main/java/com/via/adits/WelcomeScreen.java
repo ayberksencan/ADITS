@@ -30,7 +30,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.via.adits.FunctionalUses.ControlClass;
-import com.via.adits.FunctionalUses.JsonClass;
+import com.via.adits.FunctionalUses.JsonSetter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -84,7 +84,7 @@ public class WelcomeScreen extends AppCompatActivity{
         final ControlClass controller = new ControlClass();
 
         //Creating a JsonClass object to send Json data.
-        final JsonClass json = new JsonClass();
+        final JsonSetter json = new JsonSetter();
 
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -116,7 +116,7 @@ public class WelcomeScreen extends AppCompatActivity{
                             String health = healtInfo;
                             Integer level = json.calculateLevel(age, health, WelcomeScreen.this);
                             json.sendData(name, tc, age, health, level);
-                            new JsonClass().execute();
+                            new JsonSetter().execute();
                             sleep(500);
                             int flag = json.getFlag();
                             if(flag == 1){
