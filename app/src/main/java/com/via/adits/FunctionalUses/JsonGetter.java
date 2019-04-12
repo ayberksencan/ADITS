@@ -1,10 +1,13 @@
 package com.via.adits.FunctionalUses;
 import android.os.AsyncTask;
 import android.util.Log;
+
 import com.via.adits.Adapters.HttpHandler;
 import com.via.adits.WifiScreen;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
+
 
 public class JsonGetter extends AsyncTask<Void, Void, Void> {
 
@@ -29,12 +32,12 @@ public class JsonGetter extends AsyncTask<Void, Void, Void> {
     @Override
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
-
+        setFlag = 1;
         if(Name != null && TCNo != null && Age != null && Health != null && Level != null){
-            setFlag = 1;
+            wifiScreen.setFound(Name, TCNo, Age, Health, Level);
         }
         else{
-            setFlag = 0;
+            wifiScreen.setNotFound();
         }
     }
 
@@ -58,11 +61,15 @@ public class JsonGetter extends AsyncTask<Void, Void, Void> {
                     //Elde edilen bilgileri, başlıklara göre parse eden blok.
                     JSONObject kisi = kisiler.getJSONObject(i);
                     Name = kisi.getString("Name");
-                    Log.d("JsonGetterName", Name);
+                    Log.d("Name", Name);
                     TCNo = kisi.getString("TC No");
+                    Log.d("Tcno", TCNo);
                     Age = kisi.getString("Age");
+                    Log.d("Age", Age);
                     Health = kisi.getString("Healt Status");
+                    Log.d("Health", Health);
                     Level = kisi.getString("Level");
+                    Log.d("Level", Level);
                 }
             }
             catch(Exception e){

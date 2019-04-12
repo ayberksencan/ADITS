@@ -5,13 +5,15 @@ package com.via.adits;
 //Company: Via Computer Systems Limited Company
 //Start Date of Project: 13/02/2019
 
+import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.net.wifi.WifiConfiguration;
-import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -25,18 +27,22 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import com.via.adits.FunctionalUses.OnSwipeTouchListener;
 import com.via.adits.FunctionalUses.ControlClass;
 import com.via.adits.FunctionalUses.JsonSetter;
 
+import org.jsoup.Jsoup;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class WelcomeScreen extends AppCompatActivity{
+public class WelcomeScreen extends AppCompatActivity {
 
     public String healtInfo;
     public int Position;
@@ -44,8 +50,15 @@ public class WelcomeScreen extends AppCompatActivity{
     public boolean tcBoolean;
     public boolean ageBoolean;
     public boolean healthBoolean;
-    String[] health = {"Health Status","Good","Moderate","Poor"};
+    String[] health = {"Health Status", "Good", "Moderate", "Poor"};
+    String name;
+    String tc;
+    String age;
+    String health1;
+    Integer level;
+    public RelativeLayout relativeLayout;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstaveState) {
         super.onCreate(savedInstaveState);
@@ -75,6 +88,7 @@ public class WelcomeScreen extends AppCompatActivity{
         final EditText ageInput = (EditText) findViewById(R.id.age_input);
         Button submitButton = (Button) findViewById(R.id.submitBtn);
         WifiManager wifiManager = (WifiManager) getBaseContext().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        relativeLayout = (RelativeLayout) findViewById(R.id.welcomeScreen);
 
         //Getting the instance of Spinner and applying OnItemSelectedListener on it
         final Spinner healthInput = (Spinner) findViewById(R.id.health_input);
@@ -86,75 +100,65 @@ public class WelcomeScreen extends AppCompatActivity{
         //Creating a JsonClass object to send Json data.
         final JsonSetter json = new JsonSetter();
 
+        relativeLayout.setOnTouchListener(new OnSwipeTouchListener(WelcomeScreen.this){
+            @Override
+            public void onSwipeLeft() {
+                startActivity(new Intent(WelcomeScreen.this,WifiScreen.class));
+                finish();
+            }
+        });
+
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                controller.editTextNullCheck(nameInput, WelcomeScreen.this);
-                controller.editTextNullCheck(tcInput, WelcomeScreen.this);
-                controller.editTextNullCheck(ageInput, WelcomeScreen.this);
-                if(nameInput == null || tcInput==null || ageInput == null ){
-                    Log.d("Error", "Something is null");
-                }
 
                 nameBoolean = controller.editTextEmptyCheck(nameInput, WelcomeScreen.this);
                 tcBoolean = controller.editTextEmptyCheck(tcInput, WelcomeScreen.this);
                 ageBoolean = controller.editTextEmptyCheck(ageInput, WelcomeScreen.this);
                 healthBoolean = controller.spinnerEmptyCheck(Position, WelcomeScreen.this);
 
-                controlEditTexts(nameInput, tcInput, ageInput, nameBoolean, tcBoolean,ageBoolean);
+                controlEditTexts(nameInput, tcInput, ageInput, nameBoolean, tcBoolean, ageBoolean);
 
-                if(!nameBoolean && !tcBoolean && !ageBoolean && !healthBoolean){
-                    if (controller.isConnected(WelcomeScreen.this)){
-                            WifiConfiguration conf = getConf();
-                            controlNetwork(conf, WelcomeScreen.this);
-                            assert nameInput != null;
-                            String name = nameInput.getText().toString();
-                            assert tcInput != null;
-                            String tc = tcInput.getText().toString();
-                            assert ageInput != null;
-                            String age = ageInput.getText().toString();
-                            String health = healtInfo;
-                            Integer level = json.calculateLevel(age, health, WelcomeScreen.this);
-                            json.sendData(name, tc, age, health, level);
-                            new JsonSetter().execute();
-                            sleep(500);
-                            int flag = json.getFlag();
-                            if(flag == 1){
-                                showMessage("Data has been updated successfully !");
-                            }
-                            else{showMessage("Data couldn't updated, please be sure your are connected to adits !");}
-                        }
-                    }
+                if (!nameBoolean && !tcBoolean && !ageBoolean && !healthBoolean) {
+                        name = nameInput.getText().toString();
+                        tc = tcInput.getText().toString();
+                        age = ageInput.getText().toString();
+                        health1 = healtInfo.toString();
+                        level = json.calculateLevel(age, health1, WelcomeScreen.this);
+                        Log.d("Name", name);
+                        Log.d("tcNo", tc);
+                        Log.d("Age", age);
+                        Log.d("Health", health1);
+                        Log.d("Level", String.valueOf(level));
+                        new sendData().execute();
                 }
+            }
         });
 
 
         // Initializing an ArrayAdapter
         final ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(
-                this,android.R.layout.simple_spinner_item,healthList){
+                this, android.R.layout.simple_spinner_item, healthList) {
             @Override
-            public boolean isEnabled(int position){
-                if(position == 0)
-                {
+            public boolean isEnabled(int position) {
+                if (position == 0) {
                     // Disable the first item from Spinner
                     // First item will be use for hint
                     return false;
-                }
-                else
-                {
+                } else {
                     return true;
                 }
             }
+
             @Override
             public View getDropDownView(int position, View convertView,
                                         @NonNull ViewGroup parent) {
                 View view = super.getDropDownView(position, convertView, parent);
                 TextView tv = (TextView) view;
-                if(position == 0){
+                if (position == 0) {
                     // Set the hint text color gray
                     tv.setTextColor(Color.GRAY);
-                }
-                else {
+                } else {
                     tv.setTextColor(Color.BLACK);
                 }
                 return view;
@@ -169,7 +173,7 @@ public class WelcomeScreen extends AppCompatActivity{
                 String selectedItemText = (String) parent.getItemAtPosition(position);
                 // If user change the default selection
                 // First item is disable and it is used for hint
-                if(position > 0){
+                if (position > 0) {
                     // Notify the selected item text
                     healtInfo = selectedItemText;
                     Position = position;
@@ -183,83 +187,65 @@ public class WelcomeScreen extends AppCompatActivity{
         });
     }
 
-    public void controlEditTexts(EditText name, EditText tc, EditText age, boolean nameB, boolean tcB, boolean ageB){
+    public void controlEditTexts(EditText name, EditText tc, EditText age, boolean nameB, boolean tcB, boolean ageB) {
 
-        if(nameB){
+        if (nameB) {
             name.setBackground(getDrawable(R.drawable.edittext_bg_red));
-        }
-
-        else if (!nameB){
+        } else if (!nameB) {
             name.setBackground(getDrawable(R.drawable.edittext_bg));
         }
 
-        if(tcB){
+        if (tcB) {
             tc.setBackground(getDrawable(R.drawable.edittext_bg_red));
-        }
-
-        else if (!tcB){
+        } else if (!tcB) {
             tc.setBackground(getDrawable(R.drawable.edittext_bg));
         }
 
-        if(ageB){
+        if (ageB) {
             age.setBackground(getDrawable(R.drawable.edittext_bg_red));
-        }
-
-        else if (!ageB){
+        } else if (!ageB) {
             age.setBackground(getDrawable(R.drawable.edittext_bg));
         }
 
     }
 
-    public void showMessage(String message){
+    public void showMessage(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
-    public WifiConfiguration getConf(){
-        WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        WifiConfiguration conf = new WifiConfiguration();
-        for(int i = 0; i<wifiManager.getConfiguredNetworks().size(); i++){
-            if (wifiManager.getConnectionInfo().getSSID().equals(wifiManager.getConfiguredNetworks().get(i).SSID)){
-                conf.SSID = wifiManager.getConfiguredNetworks().get(i).SSID;
-                conf.preSharedKey = wifiManager.getConfiguredNetworks().get(i).preSharedKey;
+
+    class sendData extends AsyncTask<Void, Void, Void> {
+
+        private ProgressDialog progress;
+        private boolean isSended;
+
+        @Override
+        protected void onPreExecute() {
+            progress = ProgressDialog.show(WelcomeScreen.this, "Sending...",
+                    "JSON Information ", true);
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            progress.dismiss();
+            if (isSended){
+                showMessage("Data sended succesfully");
+            }
+            else{
+                showMessage("Couldn't send the Json data, please try again !");
             }
         }
-        return conf;
-    }
 
+        @Override
+        protected Void doInBackground(Void... voids) {
 
-    public void controlNetwork(WifiConfiguration config, Context context){
-        WifiConfiguration conf = new WifiConfiguration();
-        WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-
-        //Fragment'dan alınan bilgilerin konfigürasyonlarının yapıldığı blok.
-        conf.SSID = "\"" + config.SSID + "\"";
-        conf.preSharedKey = "\"" + config.preSharedKey + "\"";
-
-        //Verilen bilgilere göre ağa bağlanma isteğini gönderen ve bağlanma işlemini gerçekleştiren blok.
-        int netId = wifiManager.addNetwork(conf);
-        if (netId != -1) {
-            wifiManager.enableNetwork(netId, true);
-            wifiManager.saveConfiguration();
-        }
-        else{
-            for(int i = 0; i<wifiManager.getConfiguredNetworks().size(); i++){
-                if(conf.SSID.equals(wifiManager.getConfiguredNetworks().get(i).SSID)){
-                    wifiManager.getConfiguredNetworks().remove(i);
-                    netId = wifiManager.addNetwork(conf);
-                    wifiManager.saveConfiguration();
-                }
+            try {
+                Jsoup.connect("http://192.168.4.1/buffer").data("u_name", String.valueOf(name)).data("u_tcno", String.valueOf(" "+tc)).data("u_age", String.valueOf(age)).data("u_healts", String.valueOf(health1)).data("u_level", String.valueOf(level)).post();
+                isSended = true;
+            } catch (IOException e) {
+                isSended = false;
             }
+            return null;
         }
     }
-
-    public void sleep(int time){
-        try{
-            Thread.sleep(time);
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-
 }

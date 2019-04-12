@@ -6,9 +6,308 @@ package com.via.adits;
 //Start Date of Project: 13/02/2019
 
 import android.Manifest;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.LocationManager;
+import android.net.wifi.ScanResult;
+import android.net.wifi.WifiConfiguration;
+import android.net.wifi.WifiManager;
+import android.os.AsyncTask;
+import android.os.Build;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.via.adits.Adapters.WifiAdapter;
+import com.via.adits.Adapters.WifiAddress;
+import com.via.adits.FunctionalUses.OnSwipeTouchListener;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
+
+
+public class WifiScreen extends AppCompatActivity {
+
+    /*---------------------------Public Identfy------------------------------*/
+    // Personel Information
+    TextView nameTxt;
+    TextView tcTxt;
+    TextView ageTxt;
+    TextView healthTxt;
+    TextView levelTxt;
+
+    //Wifi List
+    ListView wifiList;
+
+    //İnfo Text
+    ImageView warning;
+    TextView warningTxt;
+
+    //SwipeRefreshLayout
+    SwipeRefreshLayout swipeRefreshLayout;
+
+    // Managers
+    WifiManager wifiManager;
+    LocationManager locationManager;
+
+    // Multiple Permissinons
+    private static final int REQUEST_ID_MULTIPLE_PERMISSIONS = 1;
+
+    // WifiClass
+    List<WifiAddress> wifiAddresses = new ArrayList<WifiAddress>();
+
+    // WİFİ scan than Scan Results
+    List<ScanResult> scanResults = new ArrayList<ScanResult>();
+
+    //Wifi Configuration Informations
+    String SSID,Password;
+
+    RelativeLayout relativeLayout;
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.wifi_screen);
+
+        /*---------------------------Variable Initialization------------------------------*/
+
+        nameTxt = (TextView)findViewById(R.id.name_info);
+        tcTxt = (TextView)findViewById(R.id.tc_info);
+        ageTxt = (TextView)findViewById(R.id.age_info);
+        healthTxt = (TextView)findViewById(R.id.health_info);
+        levelTxt = (TextView)findViewById(R.id.level_info);
+
+        wifiList = (ListView) findViewById(R.id.wifi_list);
+
+        /*
+        warning = (ImageView) findViewById(R.id.warning);
+        warningTxt = (TextView) findViewById(R.id.warningTxt);
+        */
+
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.pullToRefresh);
+
+        relativeLayout = (RelativeLayout) findViewById(R.id.wifiScreen);
+
+        wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+
+        final WifiAdapter wifiAdapter = new WifiAdapter(this, wifiAddresses);
+        wifiList.setAdapter(wifiAdapter);
+
+
+
+        /*---------------------------CODE START------------------------------*/
+
+        //requestPermisssions();
+        scanWifi();
+
+        /*---------------------------SwipePage to RegisterActivity(Wifi)------------------------------*/
+        relativeLayout.setOnTouchListener(new OnSwipeTouchListener(WifiScreen.this){
+            @Override
+            public void onSwipeRight() {
+                startActivity(new Intent(WifiScreen.this,WelcomeScreen.class));
+                finish();
+            }
+        });
+
+
+        /*--------------------------- wifiList Click------------------------------*/
+        wifiList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                SSID = wifiAddresses.get(position).getSSID();
+                Password = "12345678";
+                connect();
+                view.setSelected(true);
+                /*--- Controller ---*/
+                try{
+                    Thread.sleep(2000);
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                }
+                getJSONdata();
+            }
+        });
+
+
+        /*-------------------------- swipeRefreshLayout Refresh ------------------------------*/
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                scanWifi();
+                wifiAdapter.notifyDataSetChanged();
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
+    }
+    /*---------------------------CODE END------------------------------*/
+
+
+    /*---------------------------scanWifi------------------------------*/
+    public void scanWifi(){
+        wifiAddresses.clear();
+        Toast.makeText(this, "WİFİ Scanning... ", Toast.LENGTH_SHORT).show();
+        wifiManager.startScan();
+        scanResults = wifiManager.getScanResults();
+        for (ScanResult scanResult:scanResults){
+            wifiAddresses.add(new WifiAddress(scanResult.SSID, scanResult.BSSID, Integer.toString(scanResult.level), String.valueOf(wifiManager.calculateSignalLevel(scanResult.level,100))));
+        }
+    }
+
+    /*---------------------------connect ADITS------------------------------*/
+    public void connect(){
+        List<WifiConfiguration> configurationList = wifiManager.getConfiguredNetworks();
+        WifiConfiguration newCon =new WifiConfiguration();
+        newCon.SSID = "\"" + SSID + "\"";
+        newCon.preSharedKey = "\"" + Password + "\"";
+
+        int netId = wifiManager.addNetwork(newCon);
+
+        if (netId != -1)
+        {
+            wifiManager.disconnect();
+            wifiManager.enableNetwork(netId, true);
+            wifiManager.reconnect();
+        }
+        else
+        {
+            for( WifiConfiguration i : configurationList ) {
+                if (i.SSID.equals(newCon.SSID)){
+                    wifiManager.disconnect();
+                    wifiManager.enableNetwork(i.networkId, true);
+                    wifiManager.reconnect();
+                    break;
+                }
+            }
+        }
+    }
+
+    /*---------------------------getJSONdata------------------------------*/
+
+    public void getJSONdata (){
+        new getJSON().execute("http://192.168.4.1/json");
+    }
+
+    /*-------------------------- requestPermission ------------------------------*/
+    public void requestPermisssions(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+                checkAndRequestPermissions();
+                Toast.makeText(this, "Please refresh after giving requested permissions !", Toast.LENGTH_SHORT).show();
+            }
+            else
+            {
+                if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+                    Toast.makeText(this, "Please, turn on Location Service!", Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    if (wifiManager != null){
+                        wifiManager.setWifiEnabled(true);
+                        /* Will be Filled with Scanwifi()*/
+                    }
+                }
+            }
+        }
+    }
+
+    /*-------------------------- checkAndRequestPermissions ------------------------------*/
+    private boolean checkAndRequestPermissions() {
+        final int permissionAccessCoarseLocation = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_COARSE_LOCATION);
+        List<String> listPermissionsNeeded = new ArrayList<>();
+
+        //Lokasyon izninin varlığını kontrol eden blok.
+        if (permissionAccessCoarseLocation != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.ACCESS_COARSE_LOCATION);
+        }
+        //Diğer izinlerin varlığını kontrol eden yoksa izin isteyen blok.
+        if (!listPermissionsNeeded.isEmpty()) {
+            ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), REQUEST_ID_MULTIPLE_PERMISSIONS);
+            return false;
+        }
+        return true;
+    }
+
+
+    /*-------------------------- getJSON - Json Data in the Webserver has parsed. ------------------------------*/
+    class getJSON extends AsyncTask<String,String,String>{
+
+        @Override
+        protected String doInBackground(String... params) {
+            // Frist Item is Host address.
+            HttpURLConnection connection = null;
+            BufferedReader br = null;
+
+            try {
+                URL url = new URL(params[0]);
+                connection = (HttpURLConnection) url.openConnection();
+                connection.connect();
+                InputStream is = connection.getInputStream();
+                br = new BufferedReader(new InputStreamReader(is));
+                String satir;
+                String dosya = "";
+                while ((satir = br.readLine()) != null) {
+                    Log.d("satir", satir);
+                    dosya += satir;
+                }
+                connection.disconnect();
+                return dosya;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return "dataError";
+        }
+        @Override
+        protected void onPostExecute(String s) {
+            try{
+                JSONObject jo = new JSONObject(s);
+                JSONArray information = jo.getJSONArray("people");
+                for (int i=0; i < information.length(); i++)
+                {
+                    JSONObject kisi = information.getJSONObject(i);
+                    nameTxt.setText("Name : " + kisi.getString("Name"));
+                    tcTxt.setText("TC ID : " + kisi.getString("TC No"));
+                    ageTxt.setText("Age : " + kisi.getString("Age"));
+                    healthTxt.setText("Health Status : " + kisi.getString("Healt Status"));
+                    levelTxt.setText("Level : " + kisi.getString("Level"));
+                }
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
+            super.onPostExecute(s);
+        }
+    }
+}
+
+
+/*
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
@@ -32,11 +331,17 @@ import android.view.animation.Animation;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.via.adits.Adapters.CustomAdapter;
+import com.via.adits.Adapters.HttpHandler;
 import com.via.adits.FunctionalUses.Item;
 import com.via.adits.FunctionalUses.JsonGetter;
+import com.via.adits.FunctionalUses.OnSwipeTouchListener;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -59,7 +364,6 @@ public class WifiScreen extends AppCompatActivity {
     public View ConnectedView;
     public String ssidConnected;
     public ProgressDialog progressDialog1;
-    String key;
     public TextView nameInfo;
     public TextView tcInfo;
     public TextView ageInfo;
@@ -69,24 +373,15 @@ public class WifiScreen extends AppCompatActivity {
     public int flag;
     public int itemPos;
     public JsonGetter jsonGetter;
+    public RelativeLayout relativeLayout;
 
+    public String SSID;
+    public String Password;
+
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        //No title will be shown
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        //Bottom navigation bar of Android will not be shown.
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-        //No Status Bar will be shown
-        View decorView = getWindow().getDecorView();
-        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
-        decorView.setSystemUiVisibility(uiOptions);
-
-        //welcome_screen layout will be loaded as this classes layout
-        setContentView(R.layout.wifi_screen);
-        //This screen will always shown vertical
-        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         //Variable definitions will be made under this block.
         nameInfo = (TextView) findViewById(R.id.name_info);
@@ -101,6 +396,7 @@ public class WifiScreen extends AppCompatActivity {
         final TextView connected;
         View convertView;
         final ArrayList itemList = null;
+        relativeLayout = (RelativeLayout) findViewById(R.id.wifiScreen);
 
         progressDialog1 = new ProgressDialog(WifiScreen.this);
         wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
@@ -117,6 +413,34 @@ public class WifiScreen extends AppCompatActivity {
         isPermissionsGet();
 
 
+        relativeLayout.setOnTouchListener(new OnSwipeTouchListener(WifiScreen.this){
+            @Override
+            public void onSwipeRight() {
+                startActivity(new Intent(WifiScreen.this,WelcomeScreen.class));
+                finish();
+            }
+
+            @Override
+            public void onSwipeLeft() {
+                startActivity(new Intent(WifiScreen.this,RangeScreen.class));
+                finish();
+            }
+        });
+
+        wifiList.setOnTouchListener(new OnSwipeTouchListener(WifiScreen.this){
+            @Override
+            public void onSwipeRight() {
+                startActivity(new Intent(WifiScreen.this,WelcomeScreen.class));
+                finish();
+            }
+
+            @Override
+            public void onSwipeLeft() {
+                startActivity(new Intent(WifiScreen.this,RangeScreen.class));
+                finish();
+            }
+        });
+
         wifiList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -124,10 +448,19 @@ public class WifiScreen extends AppCompatActivity {
                 Animation animation1 = new AlphaAnimation(0.3f, 1.0f);
                 animation1.setDuration(650);
                 view.startAnimation(animation1);
-                new ButtonClick().execute();
+                SSID = wifiAddresses.get(con_pos).getSsid().substring(6);
+                if(SSID.equalsIgnoreCase("00ADITS00")){
+                    Password = "12345678";
+                    new Connect().execute();
+                    new JsonGetter().execute();
+                }
+                else{
+                    Password = "viA.Via_2018";
+                    new Connect().execute();
+                    setNotFound();
+                }
                 con_pos = position;
                 flag = 1;
-                itemPos = position;
                 }
         });
 
@@ -138,7 +471,9 @@ public class WifiScreen extends AppCompatActivity {
                 progressDialog("Refreshing", 1500);
                 scanWifi();
                 scanResults();
-                getJsonData();
+                if(Password.equalsIgnoreCase("12345678")){
+                    new JsonGetter().execute();
+                }
                 //Refresh işlemini sonlandıran blok.
                 pullToRefresh.setRefreshing(false);
                 for(int i = 0 ; i<wifiAddresses.size(); i++){
@@ -171,13 +506,6 @@ public class WifiScreen extends AppCompatActivity {
         }, timeMillis);
     }
 
-    public void getJsonData(){
-            if(wifiManager.getConnectionInfo().getSupplicantState().toString().equals("COMPLETED")){
-                Log.d("Phrase 1", "Wifi Connection established" );
-                new JsonGetter().execute();
-            }
-        }
-
     public void isPermissionsGet(){
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -201,7 +529,6 @@ public class WifiScreen extends AppCompatActivity {
                         progressDialog("Scanning...", 2000);
                         scanWifi();
                         scanResults();
-                        wifiManager.disconnect();
                     }
                 }
             }
@@ -229,27 +556,6 @@ public class WifiScreen extends AppCompatActivity {
             return false;
         }
         return true;
-    }
-
-    public void controlConfigured(List<Item> wifiAddresses) {
-        List<WifiConfiguration> wifiConfigurations = wifiManager.getConfiguredNetworks();
-        StringBuilder ntworks_ssid = new StringBuilder();
-        for (int i = 0 ; i< wifiConfigurations.size(); i++){
-            ntworks_ssid.append(wifiConfigurations.get(i).SSID);
-        }
-        Log.d("wifiConfigBefore", String.valueOf(ntworks_ssid));
-
-        for (int i = 0; i < wifiManager.getConfiguredNetworks().size(); i++) {
-            for(int k = 0; k < wifiAddresses.size(); k++){
-                if (wifiAddresses.get(k).getSsid().equalsIgnoreCase(wifiManager.getConfiguredNetworks().get(i).SSID)){
-                    int netId = wifiManager.getConfiguredNetworks().get(i).networkId;
-                    wifiManager.removeNetwork(netId);
-                }
-            }
-        }
-
-        Log.d("WifiConfigAfter", String.valueOf(ntworks_ssid));
-
     }
 
     public void setConnected(){
@@ -347,12 +653,55 @@ public class WifiScreen extends AppCompatActivity {
         });
     }
 
-    public class Connect extends AsyncTask<String, Integer, Void> {
+
+
+    public void connect(){
+        List<WifiConfiguration> configurationList = wifiManager.getConfiguredNetworks();
+        WifiConfiguration newCon =new WifiConfiguration();
+        newCon.SSID = "\"" + SSID + "\"";
+        newCon.preSharedKey = "\"" + Password + "\"";
+
+        int netId = wifiManager.addNetwork(newCon);
+
+        if (netId != -1)
+        {
+            wifiManager.disconnect();
+            wifiManager.enableNetwork(netId, true);
+            wifiManager.reconnect();
+        }
+        else
+        {
+            for( WifiConfiguration i : configurationList ) {
+                if (i.SSID.equals(newCon.SSID)){
+                    wifiManager.disconnect();
+                    wifiManager.enableNetwork(i.networkId, true);
+                    wifiManager.reconnect();
+                    break;
+                }
+            }
+        }
+    }
+
+    public class Connect extends AsyncTask<Void, Void, Void> {
+
+        ProgressDialog progress;
 
         @Override
-        protected Void doInBackground(String... strings) {
+        protected void onPreExecute() {
+            progress = ProgressDialog.show(WifiScreen.this, "Connecting...",
+                    "Please wait...", true);
+        }
 
-            String ssid = "";
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            progress.dismiss();
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+
+            connect();
+            /*String ssid = "";
             ssid = strings[0];
 
             if(ssid.equalsIgnoreCase("00ADITS00")){
@@ -372,7 +721,6 @@ public class WifiScreen extends AppCompatActivity {
 
             int netId = wifiManager.addNetwork(conf);
             if (netId != -1) {
-                wifiManager.disconnect();
                 wifiManager.enableNetwork(netId, true);
                 wifiManager.reconnect();
             }
@@ -386,55 +734,89 @@ public class WifiScreen extends AppCompatActivity {
                         break;
                     }
                 }
+            }*/
+            return null;
+        }
+    }
+
+/*
+    public class JsonGetter extends AsyncTask<Void, Void, Void> {
+
+        private String server_url = "http://192.168.4.1/json";
+        public int setFlag;
+        String Name;
+        String TCNo;
+        String Age;
+        String Health;
+        String Level;
+        ProgressDialog progress;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            setFlag = 0;
+            progress = ProgressDialog.show(WifiScreen.this, "Getting...",
+                    "JSON Information ", true);
+            try{
+                Thread.sleep(2000);
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            setFlag = 1;
+            if (Name != null && TCNo != null && Age != null && Health != null && Level != null) {
+                setFound(Name, TCNo, Age, Health, Level);
+            } else {
+                setNotFound();
+            }
+            progress.dismiss();
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+
+            //HttpHandler'ın tanımlandığı blok.
+            HttpHandler httpHandler = new HttpHandler();
+            String jsonString = httpHandler.makeServiceCall(server_url);
+
+            if (jsonString != null) {
+
+                Log.d("JSON_RESPONSE", jsonString);
+
+                try {
+                    JSONObject jsonObject = new JSONObject(jsonString);
+                    JSONArray kisiler = jsonObject.getJSONArray("people");
+
+                    for (int i = 0; i < kisiler.length(); i++) {
+
+                        //Elde edilen bilgileri, başlıklara göre parse eden blok.
+                        JSONObject kisi = kisiler.getJSONObject(i);
+                        Name = kisi.getString("Name");
+                        Log.d("Name", Name);
+                        TCNo = kisi.getString("TC No");
+                        Log.d("Tcno", TCNo);
+                        Age = kisi.getString("Age");
+                        Log.d("Age", Age);
+                        Health = kisi.getString("Healt Status");
+                        Log.d("Health", Health);
+                        Level = kisi.getString("Level");
+                        Log.d("Level", Level);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                //Hata olması durumunda terminale log basan blok.
+                Log.d("JSON_RESPONSE", "Sayfa Kaynağı Boş");
             }
             return null;
         }
     }
 
 
-    @SuppressLint("StaticFieldLeak")
-    public class ButtonClick extends AsyncTask<Void, String, String> {
-        private ProgressDialog progress;
-
-        @Override
-        protected void onPreExecute() {
-            progress = ProgressDialog.show(WifiScreen.this, "Connecting...",
-                    "Please Wait... ", true);
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            try {
-                new Connect().doInBackground(wifiAddresses.get(con_pos).getSsid().substring(6));
-                if(flag == 1){
-                    setDisconnected(itemPos);
-                    setConnected();
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return "";
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            progress.dismiss();
-            getJsonData();
-            if(jsonGetter.getFlag()==1){
-                String name = jsonGetter.getName();
-                String tcno = jsonGetter.getTCNo();
-                String age = jsonGetter.getAge();
-                String health = jsonGetter.getHealth();
-                String level = jsonGetter.getLevel();
-                setFound(name, tcno, age, health, level);
-            }
-            else{
-                setNotFound();
-            }
-        }
-    }
-
-
-}
-
+}*/

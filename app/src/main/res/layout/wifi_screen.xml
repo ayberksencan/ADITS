@@ -79,7 +79,6 @@
         android:layout_below="@id/person"
         android:layout_above="@id/rellay"
         android:textAlignment="center"
-        android:layout_alignParentBottom="true"
         android:visibility="visible"
         >
     <ListView
@@ -99,11 +98,15 @@
         android:layout_alignParentBottom="true"
         >
         <LinearLayout
+            android:id="@+id/infoLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:weightSum="1"
             android:gravity="center_vertical"
+            android:background="@drawable/app_fill_bg_white"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="20dp"
             >
 
             <ImageView
@@ -122,7 +125,7 @@
                 android:textSize="16sp"
                 android:textColor="@color/colorRed"
                 android:visibility="visible"
-                android:layout_weight="0.6"
+                android:layout_weight="0.7"
                 android:padding="5dp"
                 />
         </LinearLayout>

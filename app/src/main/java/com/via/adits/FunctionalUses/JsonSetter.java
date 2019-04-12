@@ -68,14 +68,14 @@ public class JsonSetter extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... voids) {
-        flag = 0;
-        try {
+        flag = 1;
+        /*try {
             Jsoup.connect("http://192.168.4.1/buffer").data("u_name", String.valueOf(Name)).data("u_tcno", String.valueOf(TcId)).data("u_age", String.valueOf(Age)).data("u_healts", String.valueOf(Health)).data("u_level", String.valueOf(Level)).post();
             flag = 1;
         } catch (IOException e) {
-            flag = 0;
+            flag = 1;
             e.printStackTrace();
-        }
+        }*/
         return null;
     }
 
