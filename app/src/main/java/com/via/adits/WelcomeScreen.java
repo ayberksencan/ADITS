@@ -138,6 +138,7 @@ public class WelcomeScreen extends AppCompatActivity {
         // Initializing an ArrayAdapter
         final ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(
                 this, android.R.layout.simple_spinner_item, healthList) {
+
             @Override
             public boolean isEnabled(int position) {
                 if (position == 0) {
@@ -155,8 +156,6 @@ public class WelcomeScreen extends AppCompatActivity {
                 View view = super.getDropDownView(position, convertView, parent);
                 TextView tv = (TextView) view;
                 if (position == 0) {
-                    tv.setHintTextColor(Color.BLACK);
-                    tv.setHintTextColor(Color.BLACK);
                     // Set the hint text color gray
                     tv.setTextColor(Color.GRAY);
                 } else {
@@ -174,6 +173,15 @@ public class WelcomeScreen extends AppCompatActivity {
                 String selectedItemText = (String) parent.getItemAtPosition(position);
                 // If user change the default selection
                 // First item is disable and it is used for hint
+                if(position == 1){
+                    healthInput.setBackground(getDrawable(R.drawable.health_green));
+                }
+                else if(position == 2){
+                    healthInput.setBackground(getDrawable(R.drawable.health_yellow));
+                }
+                else if(position == 3){
+                    healthInput.setBackground(getDrawable(R.drawable.health_red));
+                }
                 if (position > 0) {
                     // Notify the selected item text
                     healtInfo = selectedItemText;

@@ -87,7 +87,7 @@ public class RangeScreen extends AppCompatActivity {
         GraphView graph = (GraphView) findViewById(R.id.range_chart);
         series = new LineGraphSeries<DataPoint>();
         graph.addSeries(series);
-        series.setColor(Color.BLUE);
+        series.setColor(Color.GREEN);
         series.setDrawBackground(true);
         series.setBackgroundColor(Color.argb(70,100, 255, 100));
         series.setDrawDataPoints(false);

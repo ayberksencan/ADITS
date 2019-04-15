@@ -27,6 +27,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -159,10 +161,10 @@ public class WifiScreen extends AppCompatActivity {
         wifiList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                view.setSelected(true);
                 SSID = wifiAddresses.get(position).getSSID();
                 Password = "12345678";
                 connect();
-                view.setBackgroundResource(R.drawable.btn_bg2);
                 /*--- Controller ---*/
                 try{
                     Thread.sleep(5000);
@@ -191,11 +193,11 @@ public class WifiScreen extends AppCompatActivity {
     /*---------------------------scanWifi------------------------------*/
     public void scanWifi(){
         wifiAddresses.clear();
-        Toast.makeText(this, "WİFİ Scanning... ", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Scanning Available Networks...", Toast.LENGTH_SHORT).show();
         wifiManager.startScan();
         scanResults = wifiManager.getScanResults();
         for (ScanResult scanResult:scanResults){
-            wifiAddresses.add(new WifiAddress(scanResult.SSID, scanResult.BSSID, Integer.toString(scanResult.level), String.valueOf(wifiManager.calculateSignalLevel(scanResult.level,100))));
+                wifiAddresses.add(new WifiAddress(scanResult.SSID, scanResult.BSSID, Integer.toString(scanResult.level), String.valueOf(wifiManager.calculateSignalLevel(scanResult.level,100))));
         }
     }
 

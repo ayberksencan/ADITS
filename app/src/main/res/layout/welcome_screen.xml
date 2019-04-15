@@ -112,7 +112,7 @@
             android:textAlignment="center"
             android:popupBackground="@color/White"
             android:spinnerMode="dropdown"
-            android:background="@drawable/app_empty_bg_black"
+            android:background="@drawable/app_fill_same_bg"
             >
         </Spinner>
     </RelativeLayout>
