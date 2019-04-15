@@ -145,14 +145,34 @@ public class WifiScreen extends AppCompatActivity {
         relativeLayout.setOnTouchListener(new OnSwipeTouchListener(WifiScreen.this){
             @Override
             public void onSwipeRight() {
-                startActivity(new Intent(WifiScreen.this,WelcomeScreen.class));
-                finish();
+                if(wifiManager.getConnectionInfo().getSupplicantState().toString().equalsIgnoreCase("completed")){
+                    if(wifiManager.getConnectionInfo().getSSID().equalsIgnoreCase("00ADITS00")){
+                        startActivity(new Intent(WifiScreen.this,WelcomeScreen.class));
+                        finish();
+                    }
+                    else{
+                        Toast.makeText(WifiScreen.this, "Lütfen ADİTS ağlarından birine bağlanın !", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else{
+                    Toast.makeText(WifiScreen.this, "Lütfen bir ağa bağlanın !", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
             public void onSwipeLeft() {
-                startActivity(new Intent(WifiScreen.this,RangeScreen.class));
-                finish();
+                if(wifiManager.getConnectionInfo().getSupplicantState().toString().equalsIgnoreCase("completed")){
+                    if(wifiManager.getConnectionInfo().getSSID().equalsIgnoreCase("00ADITS00")){
+                        startActivity(new Intent(WifiScreen.this,WelcomeScreen.class));
+                        finish();
+                    }
+                    else{
+                        Toast.makeText(WifiScreen.this, "Lütfen ADİTS ağlarından birine bağlanın !", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else{
+                    Toast.makeText(WifiScreen.this, "Lütfen bir ağa bağlanın !", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 

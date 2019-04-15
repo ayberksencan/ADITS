@@ -18,9 +18,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.via.adits.FunctionalUses.AnimationsClass;
-import com.via.adits.FunctionalUses.ControlClass;
-
 
 public class SplashScreen extends AppCompatActivity {
 
