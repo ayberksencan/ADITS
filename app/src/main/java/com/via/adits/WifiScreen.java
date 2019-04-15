@@ -141,6 +141,10 @@ public class WifiScreen extends AppCompatActivity {
         if(!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
             buildAlertMessageNoGps();
         }
+        if(wifiManager.getConnectionInfo().getSupplicantState().toString().equalsIgnoreCase("completed")){
+            networkTxt.setText("Network : " + wifiManager.getConnectionInfo().getSSID());
+            getJSONdata();
+        }
         scanWifi();
 
         /*---------------------------SwipePage to RegisterActivity(Wifi)------------------------------*/
@@ -165,6 +169,15 @@ public class WifiScreen extends AppCompatActivity {
 
                 SSID = wifiAddresses.get(position).getSSID();
                 Password = "12345678";
+                if (SSID.equalsIgnoreCase("00ADITS00")){
+                    Password = "12345678";
+                }
+                else if(SSID.equalsIgnoreCase("via")){
+                    Password = "viA.Via_2018";
+                }
+                else{
+                    Toast.makeText(WifiScreen.this, "Lütfen ADITS ağlarından birine bağlanın !", Toast.LENGTH_SHORT).show();
+                }
                 connect();
                 /*--- Waiting for device to connect to network before getting Json data. ---*/
                 try{
@@ -182,6 +195,10 @@ public class WifiScreen extends AppCompatActivity {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                if(wifiManager.getConnectionInfo().getSupplicantState().toString().equalsIgnoreCase("completed")){
+                    networkTxt.setText("Network : " + wifiManager.getConnectionInfo().getSSID());
+                    getJSONdata();
+                }
                 scanWifi();
                 wifiAdapter.notifyDataSetChanged();
                 swipeRefreshLayout.setRefreshing(false);
@@ -216,6 +233,7 @@ public class WifiScreen extends AppCompatActivity {
             wifiManager.disconnect();
             wifiManager.enableNetwork(netId, true);
             wifiManager.reconnect();
+            networkTxt.setText("Network : " + SSID);
         }
         else
         {
@@ -224,6 +242,7 @@ public class WifiScreen extends AppCompatActivity {
                     wifiManager.disconnect();
                     wifiManager.enableNetwork(i.networkId, true);
                     wifiManager.reconnect();
+                    networkTxt.setText("Network : " + SSID);
                     break;
                 }
             }
