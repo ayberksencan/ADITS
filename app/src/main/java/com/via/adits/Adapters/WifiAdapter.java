@@ -1,4 +1,4 @@
-package com.via.adits.WifiUses;
+package com.via.adits.Adapters;
 
 import android.app.Activity;
 import android.content.Context;
@@ -7,13 +7,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+
 import com.via.adits.R;
+
 import java.util.List;
 
 public class WifiAdapter extends BaseAdapter {
-    public LayoutInflater layoutInflater;
-    public List<WifiAddress> wifiAddressList;
-    public Activity activity;
+    LayoutInflater layoutInflater;
+    List<WifiAddress> wifiAddressList;
+    Activity activity;
 
 
     public WifiAdapter(Activity activity, List<WifiAddress> mList){
@@ -45,13 +47,17 @@ public class WifiAdapter extends BaseAdapter {
         TextView ssid = (TextView) rowView.findViewById(R.id.ssid);
         TextView bssid = (TextView) rowView.findViewById(R.id.mac);
         TextView dbm = (TextView) rowView.findViewById(R.id.dbm);
-        TextView connected = (TextView) rowView.findViewById(R.id.connected);
+        TextView signal = (TextView) rowView.findViewById(R.id.signal);
 
         final WifiAddress wifiAddress = wifiAddressList.get(position);
 
         ssid.setText("SSID : " + wifiAddress.getSSID().toString());
         bssid.setText("BSSID : " + wifiAddress.getBSSID().toString());
-        dbm.setText("" + wifiAddress.getDBM());
+        dbm.setText("DBM : " + wifiAddress.getDBM());
+        signal.setText(wifiAddress.getSIGNAL());
+
+        signal.setText(wifiAddress.getSIGNAL());
+        int mySignal = Integer.parseInt(wifiAddress.getSIGNAL().replaceAll("[\\D]]",""));
 
         return rowView;
     }

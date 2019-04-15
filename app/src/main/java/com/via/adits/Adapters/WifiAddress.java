@@ -1,14 +1,16 @@
-package com.via.adits.WifiUses;
+package com.via.adits.Adapters;
 
 public class WifiAddress {
     private String SSID;
     private String BSSID;
     private String DBM;
+    private String SIGNAL;
 
-    public WifiAddress(String mSSID, String mBSSID, String mDBM){
+    public WifiAddress(String mSSID, String mBSSID, String mDBM, String mSIGNAL){
         SSID = mSSID;
         BSSID = mBSSID;
         DBM = mDBM;
+        SIGNAL = mSIGNAL;
     }
 
     public String getSSID() {
@@ -34,4 +36,13 @@ public class WifiAddress {
     public void setDBM(String DBM) {
         this.DBM = DBM;
     }
+
+    public String getSIGNAL() {
+        return SIGNAL;
+    }
+
+    public void setSIGNAL(String SIGNAL) {
+        this.SIGNAL = SIGNAL;
+    }
 }
+

@@ -6,21 +6,54 @@ package com.via.adits;
 //Start Date of Project: 13/02/2019
 
 
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
+import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.LineChart;
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.GridLabelRenderer;
+import com.jjoe64.graphview.Viewport;
+import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.LineGraphSeries;
+import com.via.adits.FunctionalUses.OnSwipeTouchListener;
 
 public class RangeScreen extends AppCompatActivity {
+
+    private LineGraphSeries<DataPoint> series;
+    private int lastX = 0;
+    private WifiManager mainWifi;
+    public int level = 0;
+    public int leveldbm;
+    private TextView label1;
+    String portIp;
+    ConnectivityManager connManagerr;
+    String label;
+    public RelativeLayout rangeLay;
+    private GraphView lineChart;
+
+    @TargetApi(Build.VERSION_CODES.M)
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         //No title will be shown
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         //Bottom navigation bar of Android will not be shown.
@@ -38,7 +71,119 @@ public class RangeScreen extends AppCompatActivity {
         //Variable definitions will be made under this block.
         ImageView appLogoRange = (ImageView) findViewById(R.id.appLogoRange);
         ImageView rangeInfo = (ImageView) findViewById(R.id.range_info);
-        LineChart rangeChart = (LineChart) findViewById(R.id.range_chart);
+        rangeLay = (RelativeLayout) findViewById(R.id.rangeScreen);
+        lineChart = (GraphView) findViewById(R.id.range_chart);
+        connManagerr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        mainWifi = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
+
+
+        rangeLay.setOnTouchListener(new OnSwipeTouchListener(RangeScreen.this) {
+            public void onSwipeRight() {
+                startActivity(new Intent(RangeScreen.this, WifiScreen.class));
+                finish();
+            }
+        });
+
+        GraphView graph = (GraphView) findViewById(R.id.range_chart);
+        series = new LineGraphSeries<DataPoint>();
+        graph.addSeries(series);
+        series.setColor(Color.BLUE);
+        series.setDrawBackground(true);
+        series.setBackgroundColor(Color.argb(70,100, 255, 100));
+        series.setDrawDataPoints(false);
+        series.setThickness(20);
+        series.setTitle("dBm");
+        rangeLay = (RelativeLayout) findViewById(R.id.rangeScreen);
+        graph.getGridLabelRenderer().setHorizontalAxisTitle("dBm");
+        graph.getGridLabelRenderer().setNumHorizontalLabels(0);
+        graph.getGridLabelRenderer().setNumVerticalLabels(3);
+        graph.setBackground(getDrawable(R.color.Transparent));
+
+
+        //Listview Üzerinden slide işlemi ile activity geçişlerini sağlayan blok.
+        rangeLay.setOnTouchListener(new OnSwipeTouchListener(RangeScreen.this) {
+            public void onSwipeRight() {
+                startActivity(new Intent(RangeScreen.this,WifiScreen.class));
+                finish();
+            }
+        });
+
+        //Listview Üzerinden slide işlemi ile activity geçişlerini sağlayan blok.
+        graph.setOnTouchListener(new OnSwipeTouchListener(RangeScreen.this) {
+            public void onSwipeRight() {
+                startActivity(new Intent(RangeScreen.this,WifiScreen.class));
+                finish();
+            }
+        });
+
+
+        GridLabelRenderer gridLabel = graph.getGridLabelRenderer();
+        gridLabel.setPadding(3);
+        graph.getGridLabelRenderer().setHumanRounding(false);
+
+        Viewport viewport = graph.getViewport();
+        viewport.setXAxisBoundsManual(true);
+        viewport.setMinX(0);
+        viewport.setMaxX(500);
+        viewport.setMinY(-100);
+        viewport.setMaxY(-30);
+        viewport.setYAxisBoundsManual(true);
+        viewport.setScrollable(false);
     }
 
-}
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                while(true){
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            addEntry();
+                        }
+                    });
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+        }).start();
+    }
+
+    private void addEntry(){
+
+        ConnectivityManager connManagerr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo mWifii = connManagerr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+
+        if (mWifii.isConnected()) {
+            level = mainWifi.getConnectionInfo().getRssi();
+            //level = WifiManager.calculateSignalLevel(mainWifi.getConnectionInfo().getRssi(), 100);
+            leveldbm = mainWifi.getConnectionInfo().getRssi();
+        }
+        if(series.getHighestValueX() < 500){
+            series.appendData(new DataPoint(lastX++, level), false, 1000000);
+        }
+        else{
+            series.appendData(new DataPoint(lastX++, level), true, 1000000);
+        }
+
+
+    }
+
+    private String setLabel(){
+        ConnectivityManager connManagerr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo mWifii = connManagerr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        if (mWifii.isConnected()) {
+            label = mainWifi.getConnectionInfo().getSSID();
+        }
+        return label;
+    }
+
+    }

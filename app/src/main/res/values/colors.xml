@@ -18,4 +18,5 @@
     <color name="black_overlay">#66000000</color>
     <color name="transparentWhite">#cccccc</color>
     <color name="DarkBlue">#001A4c</color>
+    <color name="Transparent">#00000000</color>
 </resources>

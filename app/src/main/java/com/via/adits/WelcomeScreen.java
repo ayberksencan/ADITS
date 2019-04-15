@@ -63,7 +63,6 @@ public class WelcomeScreen extends AppCompatActivity {
     protected void onCreate(Bundle savedInstaveState) {
         super.onCreate(savedInstaveState);
 
-        WelcomeScreen welcomeScreen = new WelcomeScreen();
         //No title will be shown
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         //Bottom navigation bar of Android will not be shown.
@@ -156,6 +155,8 @@ public class WelcomeScreen extends AppCompatActivity {
                 View view = super.getDropDownView(position, convertView, parent);
                 TextView tv = (TextView) view;
                 if (position == 0) {
+                    tv.setHintTextColor(Color.BLACK);
+                    tv.setHintTextColor(Color.BLACK);
                     // Set the hint text color gray
                     tv.setTextColor(Color.GRAY);
                 } else {
