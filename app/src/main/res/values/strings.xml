@@ -33,6 +33,7 @@
     <string name="age_no_data">Age: No Data</string>
     <string name="health_no_data">Health Status: No Data</string>
     <string name="level_no_data">Level: No Data</string>
+    <string name="network_not_connected">Network : Not Connected</string>
     <array name="Health">
         <item>@string/healthStatus</item>
         <item>@string/good</item>

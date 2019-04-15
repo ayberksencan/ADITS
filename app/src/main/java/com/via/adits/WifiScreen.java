@@ -62,6 +62,7 @@ public class WifiScreen extends AppCompatActivity {
     TextView ageTxt;
     TextView healthTxt;
     TextView levelTxt;
+    TextView networkTxt;
 
     //Wifi List
     ListView wifiList;
@@ -111,6 +112,7 @@ public class WifiScreen extends AppCompatActivity {
         ageTxt = (TextView)findViewById(R.id.age_info);
         healthTxt = (TextView)findViewById(R.id.health_info);
         levelTxt = (TextView)findViewById(R.id.level_info);
+        networkTxt = (TextView) findViewById(R.id.network_info);
 
         wifiList = (ListView) findViewById(R.id.wifi_list);
 
@@ -145,49 +147,28 @@ public class WifiScreen extends AppCompatActivity {
         relativeLayout.setOnTouchListener(new OnSwipeTouchListener(WifiScreen.this){
             @Override
             public void onSwipeRight() {
-                if(wifiManager.getConnectionInfo().getSupplicantState().toString().equalsIgnoreCase("completed")){
-                    if(wifiManager.getConnectionInfo().getSSID().equalsIgnoreCase("00ADITS00")){
                         startActivity(new Intent(WifiScreen.this,WelcomeScreen.class));
                         finish();
-                    }
-                    else{
-                        Toast.makeText(WifiScreen.this, "Lütfen ADİTS ağlarından birine bağlanın !", Toast.LENGTH_SHORT).show();
-                    }
-                }
-                else{
-                    Toast.makeText(WifiScreen.this, "Lütfen bir ağa bağlanın !", Toast.LENGTH_SHORT).show();
-                }
             }
 
             @Override
             public void onSwipeLeft() {
-                if(wifiManager.getConnectionInfo().getSupplicantState().toString().equalsIgnoreCase("completed")){
-                    if(wifiManager.getConnectionInfo().getSSID().equalsIgnoreCase("00ADITS00")){
-                        startActivity(new Intent(WifiScreen.this,WelcomeScreen.class));
+                        startActivity(new Intent(WifiScreen.this,RangeScreen.class));
                         finish();
-                    }
-                    else{
-                        Toast.makeText(WifiScreen.this, "Lütfen ADİTS ağlarından birine bağlanın !", Toast.LENGTH_SHORT).show();
-                    }
-                }
-                else{
-                    Toast.makeText(WifiScreen.this, "Lütfen bir ağa bağlanın !", Toast.LENGTH_SHORT).show();
-                }
             }
         });
-
 
         /*--------------------------- wifiList Click------------------------------*/
         wifiList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                view.setSelected(true);
+
                 SSID = wifiAddresses.get(position).getSSID();
                 Password = "12345678";
                 connect();
-                /*--- Controller ---*/
+                /*--- Waiting for device to connect to network before getting Json data. ---*/
                 try{
-                    Thread.sleep(5000);
+                    Thread.sleep(6000);
                 }
                 catch (Exception e){
                     e.printStackTrace();
@@ -359,6 +340,7 @@ public class WifiScreen extends AppCompatActivity {
                     ageTxt.setText("Age : " + kisi.getString("Age"));
                     healthTxt.setText("Health Status : " + kisi.getString("Healt Status"));
                     levelTxt.setText("Level : " + kisi.getString("Level"));
+                    networkTxt.setText("Network : " + wifiManager.getConnectionInfo().getSSID());
                 }
             }
             catch (Exception e){
