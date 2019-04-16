@@ -94,7 +94,6 @@ public class WifiScreen extends AppCompatActivity {
 
     RelativeLayout relativeLayout;
 
-
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -218,6 +217,40 @@ public class WifiScreen extends AppCompatActivity {
     /*---------------------------CODE END------------------------------*/
 
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                while(true){
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (!wifiManager.getConnectionInfo().getSSID().toString().contains("ADITS")){
+                                nameTxt.setText("Name : Not Found");
+                                tcTxt.setText("TC ID : Not Found");
+                                ageTxt.setText("Age : Not Found");
+                                healthTxt.setText("Health Status : Not Found");
+                                levelTxt.setText("Level : Not Found");
+                            }
+                        }
+                    });
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+        }).start();
+
+    }
+
+
     /*---------------------------scanWifi------------------------------*/
     public void scanWifi(){
         wifiAddresses.clear();
@@ -225,7 +258,7 @@ public class WifiScreen extends AppCompatActivity {
         wifiManager.startScan();
         scanResults = wifiManager.getScanResults();
         for (ScanResult scanResult:scanResults){
-            if (scanResult.SSID.contains("ADITS")){
+            if (scanResult.SSID.contains("ADITS") || scanResult.SSID.contains("Via")){
                 wifiAddresses.add(new WifiAddress(scanResult.SSID, scanResult.BSSID, Integer.toString(scanResult.level), String.valueOf(wifiManager.calculateSignalLevel(scanResult.level,100))));
             }
         }
