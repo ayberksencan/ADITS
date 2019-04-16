@@ -48,6 +48,8 @@ public class RangeScreen extends AppCompatActivity {
     String label;
     public RelativeLayout rangeLay;
     private GraphView lineChart;
+    public TextView ssid;
+    public TextView dbm;
 
     @TargetApi(Build.VERSION_CODES.M)
     @SuppressLint("ClickableViewAccessibility")
@@ -75,6 +77,8 @@ public class RangeScreen extends AppCompatActivity {
         lineChart = (GraphView) findViewById(R.id.range_chart);
         connManagerr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         mainWifi = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
+        ssid = (TextView) findViewById(R.id.ssid);
+        dbm = (TextView) findViewById(R.id.dbm);
 
 
         rangeLay.setOnTouchListener(new OnSwipeTouchListener(RangeScreen.this) {
@@ -145,9 +149,13 @@ public class RangeScreen extends AppCompatActivity {
                         public void run() {
                             if (mainWifi.getConnectionInfo().getSupplicantState().toString().equalsIgnoreCase("completed")){
                                 addEntry();
+                                ssid.setText("Connected Network : " + mainWifi.getConnectionInfo().getSSID());
+                                dbm.setText("dBm : " + mainWifi.getConnectionInfo().getRssi());
                             }
                             else{
                                 addEntryManual(-100);
+                                ssid.setText("Connected Network : " + "No Connection");
+                                dbm.setText("dBm : " + "No Connection");
                             }
                         }
                     });
