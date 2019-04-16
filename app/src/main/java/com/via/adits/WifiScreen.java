@@ -228,7 +228,9 @@ public class WifiScreen extends AppCompatActivity {
         wifiManager.startScan();
         scanResults = wifiManager.getScanResults();
         for (ScanResult scanResult:scanResults){
+            if (scanResult.SSID.contains("ADITS")){
                 wifiAddresses.add(new WifiAddress(scanResult.SSID, scanResult.BSSID, Integer.toString(scanResult.level), String.valueOf(wifiManager.calculateSignalLevel(scanResult.level,100))));
+            }
         }
     }
 
