@@ -152,7 +152,10 @@ public class WifiScreen extends AppCompatActivity {
         else{
             networkTxt.setText("Network : Not Found");
         }
-        scanWifi();
+        if (wifiManager != null){
+            wifiManager.setWifiEnabled(true);
+            scanWifi();
+        }
 
         /*---------------------------SwipePage to RegisterActivity(Wifi)------------------------------*/
         relativeLayout.setOnTouchListener(new OnSwipeTouchListener(WifiScreen.this){
