@@ -75,7 +75,7 @@ public class WelcomeScreen extends AppCompatActivity {
         //welcome_screen layout will be loaded as this classes layout
         setContentView(R.layout.welcome_screen);
         //This screen will turn if sensor of the phone sense the phone has turned
-        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
+        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         //Variable definitions will be made under this block.
         ImageView appLogo = (ImageView) findViewById(R.id.appLogo);
