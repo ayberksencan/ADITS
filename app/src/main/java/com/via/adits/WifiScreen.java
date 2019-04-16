@@ -149,6 +149,9 @@ public class WifiScreen extends AppCompatActivity {
             networkTxt.setText("Network : " + wifiManager.getConnectionInfo().getSSID());
             getJSONdata();
         }
+        else{
+            networkTxt.setText("Network : Not Found");
+        }
         scanWifi();
 
         /*---------------------------SwipePage to RegisterActivity(Wifi)------------------------------*/
@@ -202,6 +205,9 @@ public class WifiScreen extends AppCompatActivity {
                 if(wifiManager.getConnectionInfo().getSupplicantState().toString().equalsIgnoreCase("completed")){
                     networkTxt.setText("Network : " + wifiManager.getConnectionInfo().getSSID());
                     getJSONdata();
+                }
+                else {
+                    networkTxt.setText("Network : Not Found");
                 }
                 scanWifi();
                 wifiAdapter.notifyDataSetChanged();
