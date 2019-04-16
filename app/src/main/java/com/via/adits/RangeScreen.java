@@ -143,7 +143,12 @@ public class RangeScreen extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            addEntry();
+                            if (mainWifi.getConnectionInfo().getSupplicantState().toString().equalsIgnoreCase("completed")){
+                                addEntry();
+                            }
+                            else{
+                                addEntryManual(-100);
+                            }
                         }
                     });
                     try {
@@ -164,7 +169,6 @@ public class RangeScreen extends AppCompatActivity {
 
         if (mWifii.isConnected()) {
             level = mainWifi.getConnectionInfo().getRssi();
-            //level = WifiManager.calculateSignalLevel(mainWifi.getConnectionInfo().getRssi(), 100);
             leveldbm = mainWifi.getConnectionInfo().getRssi();
         }
         if(series.getHighestValueX() < 500){
@@ -177,13 +181,21 @@ public class RangeScreen extends AppCompatActivity {
 
     }
 
-    private String setLabel(){
+
+    private void addEntryManual(int Level){
+
         ConnectivityManager connManagerr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo mWifii = connManagerr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        if (mWifii.isConnected()) {
-            label = mainWifi.getConnectionInfo().getSSID();
-        }
-        return label;
-    }
 
+        if (mWifii.isConnected()) {
+            level = mainWifi.getConnectionInfo().getRssi();
+            leveldbm = mainWifi.getConnectionInfo().getRssi();
+        }
+        if(series.getHighestValueX() < 500){
+            series.appendData(new DataPoint(lastX++, Level), false, 1000000);
+        }
+        else{
+            series.appendData(new DataPoint(lastX++, Level), true, 1000000);
+        }
     }
+}
