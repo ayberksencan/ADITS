@@ -182,9 +182,6 @@ public class WifiScreen extends AppCompatActivity {
                 if (SSID.equalsIgnoreCase("00ADITS00")){
                     Password = "12345678";
                 }
-                else if(SSID.equalsIgnoreCase("via")){
-                    Password = "viA.Via_2018";
-                }
                 else{
                     Toast.makeText(WifiScreen.this, "Lütfen ADITS ağlarından birine bağlanın !", Toast.LENGTH_SHORT).show();
                 }

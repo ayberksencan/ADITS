@@ -61,14 +61,14 @@ public class RangeScreen extends AppCompatActivity {
         //Bottom navigation bar of Android will not be shown.
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         //No Status Bar will be shown
-        View decorView = getWindow().getDecorView();
-        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
-        decorView.setSystemUiVisibility(uiOptions);
+        //View decorView = getWindow().getDecorView();
+        //int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
+        //decorView.setSystemUiVisibility(uiOptions);
 
         //welcome_screen layout will be loaded as this classes layout
         setContentView(R.layout.range_screen);
         //This screen will always shown horizontal
-        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE);
 
         //Variable definitions will be made under this block.
         ImageView appLogoRange = (ImageView) findViewById(R.id.appLogoRange);
