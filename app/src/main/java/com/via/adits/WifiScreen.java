@@ -32,6 +32,7 @@ import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -119,6 +120,7 @@ public class WifiScreen extends AppCompatActivity {
         levelTxt = (TextView)findViewById(R.id.level_info);
         networkTxt = (TextView) findViewById(R.id.network_info);
 
+
         wifiList = (ListView) findViewById(R.id.wifi_list);
 
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.pullToRefresh);
@@ -153,6 +155,7 @@ public class WifiScreen extends AppCompatActivity {
             scanWifi();
         }
 
+
         /*---------------------------Page Swiping Function to Range and Welcome Screens------------------------------*/
         relativeLayout.setOnTouchListener(new OnSwipeTouchListener(WifiScreen.this){
             @Override
@@ -175,21 +178,13 @@ public class WifiScreen extends AppCompatActivity {
 
                 SSID = wifiAddresses.get(position).getSSID();
                 Password = "12345678";
-                if (SSID.equalsIgnoreCase("00ADITS00")){
+                if (SSID.contains("ADITS")){
                     Password = "12345678";
                 }
                 else{
-                    Toast.makeText(WifiScreen.this, "Lütfen ADITS ağlarından birine bağlanın !", Toast.LENGTH_SHORT).show();
+                    Password = "viA.Via_2018";
                 }
                 connect();
-                /*--- Waiting for device to connect to network before getting Json data. ---*/
-                try{
-                    Thread.sleep(4500);
-                }
-                catch (Exception e){
-                    e.printStackTrace();
-                }
-                getJSONdata();
             }
         });
 
@@ -222,17 +217,20 @@ public class WifiScreen extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-
                 while(true){
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            if (!wifiManager.getConnectionInfo().getSSID().toString().contains("ADITS")){
+                            if (!wifiManager.getConnectionInfo().getSSID().contains("ADITS")){
                                 nameTxt.setText("Name : Not Found");
                                 tcTxt.setText("TC ID : Not Found");
                                 ageTxt.setText("Age : Not Found");
                                 healthTxt.setText("Health Status : Not Found");
                                 levelTxt.setText("Level : Not Found");
+                            }
+
+                            if (nameTxt.getText().toString().equalsIgnoreCase("Name : Not Found") && wifiManager.getConnectionInfo().getSupplicantState().toString().equalsIgnoreCase("completed")){
+                                getJSONdata();
                             }
                         }
                     });
@@ -273,6 +271,7 @@ public class WifiScreen extends AppCompatActivity {
 
         if (netId != -1)
         {
+            Log.d("SSID and Password 1", SSID + Password);
             wifiManager.disconnect();
             wifiManager.enableNetwork(netId, true);
             wifiManager.reconnect();
@@ -282,6 +281,7 @@ public class WifiScreen extends AppCompatActivity {
         {
             for( WifiConfiguration i : configurationList ) {
                 if (i.SSID.equals(newCon.SSID)){
+                    Log.d("SSID and Password -1", SSID + Password);
                     wifiManager.disconnect();
                     wifiManager.enableNetwork(i.networkId, true);
                     wifiManager.reconnect();

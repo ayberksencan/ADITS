@@ -17,7 +17,7 @@
         android:layout_centerHorizontal="true"
         android:textSize="27sp"
         android:textColor="@color/colorIceBlue"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         />
 
     <TextView
