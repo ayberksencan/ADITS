@@ -57,8 +57,8 @@ import java.util.List;
 
 public class WifiScreen extends AppCompatActivity {
 
-    /*---------------------------Public Identfy------------------------------*/
-    // Personel Information
+    /*---------------------------Public Definitions------------------------------*/
+    // Personal Information TextViews
     TextView nameTxt;
     TextView tcTxt;
     TextView ageTxt;
@@ -69,33 +69,35 @@ public class WifiScreen extends AppCompatActivity {
     //Wifi List
     ListView wifiList;
 
-    //İnfo Text
+    //İnformation Tab at the bottom of the screen
     ImageView warning;
     TextView warningTxt;
 
-    //SwipeRefreshLayout
+    //Refreshing functions object
     SwipeRefreshLayout swipeRefreshLayout;
 
     // Managers
     WifiManager wifiManager;
     LocationManager locationManager;
 
-    // Multiple Permissinons
+    // Multiple Permissions
     private static final int REQUEST_ID_MULTIPLE_PERMISSIONS = 1;
 
-    // WifiClass
+    // Creating a list which takes WifiAdress class objects as input.
     List<WifiAddress> wifiAddresses = new ArrayList<WifiAddress>();
 
-    // WİFİ scan than Scan Results
+    // Creating a list to store ScanResults
     List<ScanResult> scanResults = new ArrayList<ScanResult>();
 
-    //Wifi Configuration Informations
+    //Wi-Fi configuration variables.
     String SSID,Password;
 
+    //Relative layout definition for swiping the screen.
     RelativeLayout relativeLayout;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
+    /*------------------------------Defines what will happen after creating the screen-----------------------------*/
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.wifi_screen);
@@ -187,7 +189,7 @@ public class WifiScreen extends AppCompatActivity {
                 connect();
                 /*--- Waiting for device to connect to network before getting Json data. ---*/
                 try{
-                    Thread.sleep(6500);
+                    Thread.sleep(1000);
                 }
                 catch (Exception e){
                     e.printStackTrace();
@@ -202,7 +204,7 @@ public class WifiScreen extends AppCompatActivity {
             @Override
             public void onRefresh() {
                 if(wifiManager.getConnectionInfo().getSupplicantState().toString().equalsIgnoreCase("completed")){
-                    networkTxt.setText("Network : " + wifiManager.getConnectionInfo().getSSID());
+                    networkTxt.setText("Network : " + wifiManager.getConnectionInfo().getSSID().toString());
                     getJSONdata();
                 }
                 else {
@@ -215,6 +217,40 @@ public class WifiScreen extends AppCompatActivity {
         });
     }
     /*---------------------------CODE END------------------------------*/
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                while(true){
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (!wifiManager.getConnectionInfo().getSSID().toString().contains("ADITS")){
+                                nameTxt.setText("Name : Not Found");
+                                tcTxt.setText("TC ID : Not Found");
+                                ageTxt.setText("Age : Not Found");
+                                healthTxt.setText("Health Status : Not Found");
+                                levelTxt.setText("Level : Not Found");
+                            }
+                        }
+                    });
+                    try {
+                        Thread.sleep(250);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+        }).start();
+
+    }
 
 
     /*---------------------------scanWifi------------------------------*/
