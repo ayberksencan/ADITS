@@ -17,8 +17,10 @@ import com.via.adits.WelcomeScreen;
 import java.util.ArrayList;
 import java.util.List;
 
+/*------This class has been created to control some variables outside where they used. So, we can decrease the load of the variables' class------*/
 public class ControlClass extends AppCompatActivity {
 
+    /*------------------------------------------Defining global variables to use in the processes of this class----------------------------------*/
     public static final int REQUEST_ID_MULTIPLE_PERMISSIONS = 1;
     List<String> listPermissionsNeeded = new ArrayList<>();
     ControlClass controlClass;
@@ -28,7 +30,7 @@ public class ControlClass extends AppCompatActivity {
     public Context context;
 
 
-    //This function controls if given EditText is null or not.
+    /*-----------------------------------------This function controls if given EditText is null or not--------------------------------------------*/
     public boolean editTextNullCheck(EditText e, Context c){
         if(e == null){
             Log.d("This is null: ", String.valueOf(e));
@@ -39,7 +41,7 @@ public class ControlClass extends AppCompatActivity {
         }
     }
 
-    //This function controls if the given Spinner is null or not.
+    /*--------------------------------------------This function controls if the given Spinner is null or not--------------------------------------*/
     public boolean spinnerNullCheck(Spinner s, Context c) {
         if (s == null) {
             Log.d("This is null: ", String.valueOf(s));
@@ -49,7 +51,7 @@ public class ControlClass extends AppCompatActivity {
         }
     }
 
-    //This function controls if the given EditText is empty or not.
+    /*-------------------------------------------This function controls if the given EditText is empty or not----------------------------------------*/
     public boolean editTextEmptyCheck(EditText e, Context c){
         if (e.getText().toString().isEmpty()){
             Toast.makeText(c, e.getHint()+ " CAN'T BE EMPTY !", Toast.LENGTH_SHORT).show();
@@ -58,6 +60,7 @@ public class ControlClass extends AppCompatActivity {
         else return false;
     }
 
+    /*------------------------------------------This function controls if the given spinner is empty or not-------------------------------------------*/
     public boolean spinnerEmptyCheck(int position, Context c){
         if (position == 0){
             Toast.makeText(c, "Please choose a health status !", Toast.LENGTH_SHORT).show();
@@ -68,7 +71,7 @@ public class ControlClass extends AppCompatActivity {
         }
     }
 
-    //This function controls if the device is connected to a network or not.
+    /*--------------------------------------------This function controls if the device is connected to a network or not---------------------------------*/
     public boolean isConnected(Context context){
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
@@ -81,12 +84,12 @@ public class ControlClass extends AppCompatActivity {
         }
     }
 
-    //This function shows the given mesaage at the given Context(Can be thought as screen)
+    /*-----------------------------------This function shows the given mesaage at the given Context(Can be thought as screen)----------------------------*/
     public void showMessage(String s, Context c){
         Toast.makeText(c, s, Toast.LENGTH_LONG).show();
     }
 
-
+    /*-----------------------------------This function controls if the connected network is an ADITS network or not--------------------------------------*/
     public boolean isAdits(Context context){
         WifiManager wifiManager = (WifiManager)  context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         assert wifiManager != null;
@@ -98,84 +101,4 @@ public class ControlClass extends AppCompatActivity {
             return false;
         }
     }
-
-    /*
-    public boolean checkBuildVersion(){
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-            return true;
-        }
-        else{
-            showMessage("Build version is incompatible, terminating the app!", getApplicationContext());
-            return false;
-        }
-    }
-    */
-
-    /*
-
-    public boolean checkAndRequestPermissions(Context c){
-        final int permissionAccessCoarseLocation = ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_COARSE_LOCATION);
-
-        //Checks if the location request has been granted or not.
-        if (permissionAccessCoarseLocation != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded.add(Manifest.permission.ACCESS_COARSE_LOCATION);
-        }
-        if (!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-            showMessage("Please turn your location service on !", c);
-        }
-        //Checks if request list is empty or not.
-        //If not request listed permissions.
-        if (!listPermissionsNeeded.isEmpty()) {
-            ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), REQUEST_ID_MULTIPLE_PERMISSIONS);
-            checkAndRequestPermissions(c);
-        }
-        return true;
-    }
-
-    public void enableWifi(Context c){
-        if(!wifiManager.isWifiEnabled()){
-            wifiManager.setWifiEnabled(true);
-            showMessage("Enabling wifi...", c);
-        }
-    }
-    */
-
-    /*
-
-    public ArrayList<Item> searchWifi(Context c){
-
-        //Gets, splits and stores the wifi scan results.
-        //Now they are ready to shown on list.
-        wifiReceiver.onReceive(getApplicationContext(), new Intent(c, WifiScreen.class));
-        return itemList;
-    }
-
-    public WifiManager getWifiManager(){
-        return wifiManager;
-    }
-
-    public void showConnected(String ssid, CustomAdapter adapter, View convertView){
-        ListView listView;
-        WifiScreen listview = new WifiScreen(controlClass, null, null, null, null);
-        listView = listview.getListView();
-
-        for (int i= 0; i< itemList.size(); i++){
-            if(ssid.equalsIgnoreCase(itemList.get(i).getSsid())){
-                adapter.setConnected(i, convertView, null);
-                position = i;
-            }
-        }
-    }
-    */
-    /*
-    public void showDisconnected(String ssid, CustomAdapter adapter, View convertView){
-        ListView listView;
-        WifiScreen listview = new WifiScreen(controlClass, null, null, null, null);
-        listView = listview.getListView();
-
-        adapter.setDisconnected(position, convertView, null);
-
-    }*/
-
 }

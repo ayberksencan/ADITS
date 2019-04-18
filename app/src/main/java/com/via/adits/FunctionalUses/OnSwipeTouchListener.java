@@ -12,14 +12,18 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 
+/*------------------------------This class has been created for controlling the swipe actions on the application screens--------------------*/
 public class OnSwipeTouchListener implements OnTouchListener {
 
+    /*-------------------------Defining the global variable for using in the processes of this class---------------------------------------*/
     private final GestureDetector gestureDetector;
 
+    /*------------------------------------Constructor Method for initializing an object from this class-------------------------------------------------*/
     public OnSwipeTouchListener (Context ctx){
         gestureDetector = new GestureDetector(ctx, new GestureListener());
     }
 
+    /*--------------------------This function controls if there is a touch on the screen or not----------------------------------------------*/
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         return gestureDetector.onTouchEvent(event);
@@ -35,6 +39,7 @@ public class OnSwipeTouchListener implements OnTouchListener {
             return true;
         }
 
+        /*----------------------This function controls the swipe direction and returns it-----------------------------------------------------*/
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
             boolean result = false;
@@ -67,15 +72,19 @@ public class OnSwipeTouchListener implements OnTouchListener {
         }
     }
 
+    /*----------------------------------This is a constructor function to define what will happen when swiping Right----------------------------------*/
     public void onSwipeRight() {
     }
 
+    /*----------------------------------This is a constructor function to define what will happen when swiping Left----------------------------------*/
     public void onSwipeLeft() {
     }
 
+    /*----------------------------------This is a constructor function to define what will happen when swiping Up----------------------------------*/
     public void onSwipeTop() {
     }
 
+    /*----------------------------------This is a constructor function to define what will happen when swiping Down----------------------------------*/
     public void onSwipeBottom() {
     }
 }

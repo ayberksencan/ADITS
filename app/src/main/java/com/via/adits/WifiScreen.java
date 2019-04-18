@@ -18,7 +18,6 @@ import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -27,12 +26,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -176,6 +171,21 @@ public class WifiScreen extends AppCompatActivity {
                         finish();
             }
         });
+
+        wifiList.setOnTouchListener(new OnSwipeTouchListener(WifiScreen.this){
+            @Override
+            public void onSwipeRight() {
+                startActivity(new Intent(WifiScreen.this,WelcomeScreen.class));
+                finish();
+            }
+
+            @Override
+            public void onSwipeLeft() {
+                startActivity(new Intent(WifiScreen.this,RangeScreen.class));
+                finish();
+            }
+        });
+
 
         /*---------------------------Defines what will happen when clicking an item on Wi-Fi List------------------------------*/
         wifiList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -328,7 +338,7 @@ public class WifiScreen extends AppCompatActivity {
         List<String> listPermissionsNeeded = new ArrayList<>();
 
 
-        //Lokasyon izninin varlığını kontrol eden blok.
+        /*---------------------------------Function for checking if the permissions has been granted or not-----------------------------------------------*/
         if (permissionAccessCoarseLocation != PackageManager.PERMISSION_GRANTED) {
             listPermissionsNeeded.add(Manifest.permission.ACCESS_COARSE_LOCATION);
         }
@@ -349,7 +359,7 @@ public class WifiScreen extends AppCompatActivity {
             listPermissionsNeeded.add(Manifest.permission.ACCESS_WIFI_STATE);
         }
 
-        //Diğer izinlerin varlığını kontrol eden yoksa izin isteyen blok.
+        /*----------------------------------------------Function for requesting mandatory permissions from user----------------------------------------------*/
         if (!listPermissionsNeeded.isEmpty()) {
             ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), REQUEST_ID_MULTIPLE_PERMISSIONS);
             return false;
@@ -357,6 +367,7 @@ public class WifiScreen extends AppCompatActivity {
         return true;
     }
 
+    /*------------------------------------------Function for requesting Location permission from user------------------------------------------------------*/
     private void buildAlertMessageNoGps() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("You should open your Location Service to search Wi-Fi networks. Do you want to open it?")
@@ -410,6 +421,8 @@ public class WifiScreen extends AppCompatActivity {
             }
             return "dataError";
         }
+
+        /*----------------------------------Function for defining what will happen after the process---------------------------------------------------*/
         @Override
         protected void onPostExecute(String s) {
             try{

@@ -42,8 +42,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/*This class has been created for sending the Json information to the site*/
 public class WelcomeScreen extends AppCompatActivity {
 
+    /*--------------------------------Defining the global variables to use in the processes of this class---------------------------------------------*/
     public String healtInfo;
     public int Position;
     public boolean nameBoolean;
@@ -58,6 +60,7 @@ public class WelcomeScreen extends AppCompatActivity {
     Integer level;
     public RelativeLayout relativeLayout;
 
+    /*----------------------------------------Defines what will happen when the screen has been created----------------------------------------*/
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstaveState) {
@@ -99,6 +102,7 @@ public class WelcomeScreen extends AppCompatActivity {
         //Creating a JsonClass object to send Json data.
         final JsonSetter json = new JsonSetter();
 
+        /*---------------------This function controls what will happen when swiping left(on Layout)-----------------------------*/
         relativeLayout.setOnTouchListener(new OnSwipeTouchListener(WelcomeScreen.this){
             @Override
             public void onSwipeLeft() {
@@ -107,6 +111,7 @@ public class WelcomeScreen extends AppCompatActivity {
             }
         });
 
+        /*------------------This function controls what will happen when the "SUBMIT" button pressed-------------*/
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -188,7 +193,7 @@ public class WelcomeScreen extends AppCompatActivity {
                     Position = position;
                 }
             }
-
+            /*-----------------------------This function controls what will happen when nothing selected-------------------------------------*/
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 
@@ -196,6 +201,7 @@ public class WelcomeScreen extends AppCompatActivity {
         });
     }
 
+    /*--------------------------------------This function controls if EditTexts null or empty (or not)----------------------------------------*/
     public void controlEditTexts(EditText name, EditText tc, EditText age, boolean nameB, boolean tcB, boolean ageB) {
 
         if (nameB) {
@@ -218,16 +224,20 @@ public class WelcomeScreen extends AppCompatActivity {
 
     }
 
+    /*---------------------------------------This function displays a message on the screen-------------------------------------------------------------*/
     public void showMessage(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
 
+
+    /*---------------------------------------This class is used for updating the data on the webpage----------------------------------------------------*/
     class sendData extends AsyncTask<Void, Void, Void> {
 
         private ProgressDialog progress;
         private boolean isSended;
 
+        /*-----------------------------------This function controls what will happen before the process-------------------------------------------------*/
         @Override
         protected void onPreExecute() {
             progress = ProgressDialog.show(WelcomeScreen.this, "Sending...",
@@ -235,6 +245,7 @@ public class WelcomeScreen extends AppCompatActivity {
             progress.setCancelable(true);
         }
 
+        /*-----------------------------------This function controls what will after before the process-------------------------------------------------*/
         @Override
         protected void onPostExecute(Void aVoid) {
             progress.dismiss();
@@ -246,6 +257,7 @@ public class WelcomeScreen extends AppCompatActivity {
             }
         }
 
+        /*-----------------------------------This function controls what will happen during the process-------------------------------------------------*/
         @Override
         protected Void doInBackground(Void... voids) {
 

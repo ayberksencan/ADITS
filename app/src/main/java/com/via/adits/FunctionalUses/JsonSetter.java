@@ -16,6 +16,7 @@ public class JsonSetter extends AsyncTask<Void, Void, Void> {
     Integer Level;
     int flag;
 
+    /*------------------------------------Constructor Method for initializing an object from this class-------------------------------------------------*/
     public void sendData(String name, String tcId, String age, String health, Integer level){
         Name = name;
         TcId = tcId;
@@ -23,6 +24,7 @@ public class JsonSetter extends AsyncTask<Void, Void, Void> {
         Health = health;
     }
 
+    /*------------------------------------This function calculates the Level data and gets Health and Age as input to make the calculation--------------*/
     public Integer calculateLevel(String age, String health, Context c){
 
         Integer ageStatus = 0;
@@ -66,19 +68,14 @@ public class JsonSetter extends AsyncTask<Void, Void, Void> {
         return level;
     }
 
+    /*------------------------------------------This function sets the "flag" variable-------------------------------------*/
     @Override
     protected Void doInBackground(Void... voids) {
         flag = 1;
-        /*try {
-            Jsoup.connect("http://192.168.4.1/buffer").data("u_name", String.valueOf(Name)).data("u_tcno", String.valueOf(TcId)).data("u_age", String.valueOf(Age)).data("u_healts", String.valueOf(Health)).data("u_level", String.valueOf(Level)).post();
-            flag = 1;
-        } catch (IOException e) {
-            flag = 1;
-            e.printStackTrace();
-        }*/
         return null;
     }
 
+    /*------------------------------------------This function gets the "flag" variable-------------------------------------*/
     public int getFlag (){
         return flag;
     }

@@ -22,34 +22,38 @@ import java.util.List;
 import static com.via.adits.R.color.*;
 
 public class CustomAdapter extends BaseAdapter {
+
+    /*------------------------------------Defining global variables which will be used inside of the processes of this class--------------------------*/
     private LayoutInflater mInflater;
     private List<Item> mItemList;
 
+    /*------------------------------------Constructor Method for initializing an object from this class-------------------------------------------------*/
     public CustomAdapter(Activity activity, List<Item> items) {
         mInflater = (LayoutInflater) activity.getSystemService(
                 Context.LAYOUT_INFLATER_SERVICE);
         mItemList = items;
     }
 
-    //Returns item count.
+
+    /*-------------------------------------Function for returning item count----------------------------------------------------------------------------*/
     @Override
     public int getCount() {
         return mItemList.size();
     }
 
-    //Returns item.
+    /*--------------------------------------Function for returning the item------------------------------------------------------------------------------*/
     @Override
     public Object getItem(int position) {
         return mItemList.get(position);
     }
 
-    //Returns items ID.
+    /*--------------------------------------Function for returning the item ID----------------------------------------------------------------------------*/
     @Override
     public long getItemId(int position) {
         return position;
     }
 
-    //Returns items view.
+    /*--------------------------------------Function for returning the view of the item--------------------------------------------------------------------*/
     @SuppressLint("ViewHolder")
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {

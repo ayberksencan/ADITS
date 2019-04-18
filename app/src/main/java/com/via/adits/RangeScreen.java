@@ -37,6 +37,7 @@ import com.via.adits.FunctionalUses.OnSwipeTouchListener;
 
 public class RangeScreen extends AppCompatActivity {
 
+    /*---------------------------Defining global variables to use in the processes of this class---------------------------------------*/
     private LineGraphSeries<DataPoint> series;
     private int lastX = 0;
     private WifiManager mainWifi;
@@ -51,6 +52,7 @@ public class RangeScreen extends AppCompatActivity {
     public TextView ssid;
     public TextView dbm;
 
+    /*------------------------------Defines what will happen after creating the screen-----------------------------*/
     @TargetApi(Build.VERSION_CODES.M)
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -81,6 +83,7 @@ public class RangeScreen extends AppCompatActivity {
         dbm = (TextView) findViewById(R.id.dbm);
 
 
+        /*-------------------------This function controls what will happen when sliding the screen----------------------------------------------*/
         rangeLay.setOnTouchListener(new OnSwipeTouchListener(RangeScreen.this) {
             public void onSwipeRight() {
                 startActivity(new Intent(RangeScreen.this, WifiScreen.class));
@@ -88,9 +91,11 @@ public class RangeScreen extends AppCompatActivity {
             }
         });
 
+        /*--------------------------Editing Visual Settings of the Range Chart-------------------------------------------------------------------*/
         GraphView graph = (GraphView) findViewById(R.id.range_chart);
         series = new LineGraphSeries<DataPoint>();
         graph.addSeries(series);
+        /*--------------------------Editing Visual settings of the line shown in the chart--------------------------------------------------------*/
         series.setColor(Color.GREEN);
         series.setDrawBackground(true);
         series.setBackgroundColor(Color.argb(70,100, 255, 100));
@@ -98,13 +103,14 @@ public class RangeScreen extends AppCompatActivity {
         series.setThickness(20);
         series.setTitle("dBm");
         rangeLay = (RelativeLayout) findViewById(R.id.rangeScreen);
+        /*-------------------------Editing Visual settings of the chart itself----------------------------------------------------------------------*/
         graph.getGridLabelRenderer().setHorizontalAxisTitle("dBm");
         graph.getGridLabelRenderer().setNumHorizontalLabels(0);
         graph.getGridLabelRenderer().setNumVerticalLabels(3);
         graph.setBackground(getDrawable(R.color.Transparent));
 
 
-        //Listview Üzerinden slide işlemi ile activity geçişlerini sağlayan blok.
+        /*-------------------------------------This function controls what will happen when swiping right(On Layout)--------------------------*/
         rangeLay.setOnTouchListener(new OnSwipeTouchListener(RangeScreen.this) {
             public void onSwipeRight() {
                 startActivity(new Intent(RangeScreen.this,WifiScreen.class));
@@ -112,7 +118,7 @@ public class RangeScreen extends AppCompatActivity {
             }
         });
 
-        //Listview Üzerinden slide işlemi ile activity geçişlerini sağlayan blok.
+        /*-------------------------------------This function controls what will happen when swiping right(On Graph)--------------------------*/
         graph.setOnTouchListener(new OnSwipeTouchListener(RangeScreen.this) {
             public void onSwipeRight() {
                 startActivity(new Intent(RangeScreen.this,WifiScreen.class));
@@ -135,6 +141,7 @@ public class RangeScreen extends AppCompatActivity {
         viewport.setScrollable(false);
     }
 
+    /*------------------onResume function for adding new dBm data to chart------------------------------------------------------*/
     @Override
     protected void onResume() {
         super.onResume();
@@ -170,6 +177,7 @@ public class RangeScreen extends AppCompatActivity {
         }).start();
     }
 
+    /*----------------------------------This function adds the new dBm data to the series (Series is the line on the graph)------------------*/
     private void addEntry(){
 
         ConnectivityManager connManagerr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);

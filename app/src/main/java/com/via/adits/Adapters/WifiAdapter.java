@@ -18,26 +18,32 @@ public class WifiAdapter extends BaseAdapter {
     Activity activity;
 
 
+    /*------------------------------------Constructor Method for initializing an object from this class-------------------------------------------------*/
     public WifiAdapter(Activity activity, List<WifiAddress> mList){
         layoutInflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         wifiAddressList = mList;
         this.activity = activity;
     }
+
+    /*-------------------------------------Function for returning the item count-------------------------------------------------------------------------*/
     @Override
     public int getCount() {
         return wifiAddressList.size();
     }
 
+    /*-------------------------------------Function for returning the item--------------------------------------------------------------------------------*/
     @Override
     public Object getItem(int position) {
         return wifiAddressList.get(position);
     }
 
+    /*-------------------------------------Function for returning the ID of the item-----------------------------------------------------------------------*/
     @Override
     public long getItemId(int position) {
         return position;
     }
 
+    /*-------------------------------------Function for returning the View of the item---------------------------------------------------------------------*/
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View rowView;
@@ -51,11 +57,13 @@ public class WifiAdapter extends BaseAdapter {
 
         final WifiAddress wifiAddress = wifiAddressList.get(position);
 
+        /*---------------------------------Editing this items TextViews with the information of this network-------------------------------------------------*/
         ssid.setText("SSID : " + wifiAddress.getSSID().toString());
         bssid.setText("BSSID : " + wifiAddress.getBSSID().toString());
         dbm.setText("DBM : " + wifiAddress.getDBM());
         signal.setText(wifiAddress.getSIGNAL());
 
+        /*---------------------------------This block converts the dBm data to signal percentage-------------------------------------------------------------*/
         signal.setText(wifiAddress.getSIGNAL());
         int mySignal = Integer.parseInt(wifiAddress.getSIGNAL().replaceAll("[\\D]]",""));
 

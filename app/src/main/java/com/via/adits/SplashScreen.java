@@ -18,10 +18,11 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-
+/*-----------------------------------This function has been created for Splash Screen-----------------------------------------------------*/
 public class SplashScreen extends AppCompatActivity {
 
 
+    /*--------------------------------onCreate method defines what will happen when created the screen-----------------------------------*/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,23 +47,23 @@ public class SplashScreen extends AppCompatActivity {
         TextView aditsLong = (TextView) findViewById(R.id.adits3);
         TextView companyName = (TextView) findViewById(R.id.companyName);
 
-        //RotateClockwise saat yönünde döneceğini belirtir.
+
         Animation animation_i = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate_clockwise);
-        //Animasyon süresi: 3000 MilliSeconds = 3 Seconds
+        //Setting the duration of the animation as 3000 milliseconds = 3 seconds
         animation_i.setDuration(3000);
         appLogo.setAnimation(animation_i);
 
 
         animation_i.setAnimationListener(new Animation.AnimationListener() {
-            //Animasyon başlangıcında yapılacaklar.
+            /*---------------------------------Defines what will happen on the start of the animation-----------------------*/
             @Override
             public void onAnimationStart(Animation animation) {
             }
 
-            //Animasyonun bitiminde yapılacaklar.
+            /*----------------------------------Defines what will happen on the end of the animation------------------------*/
             @Override
             public void onAnimationEnd(Animation animation) {
-                //Animasyonu Sonlandır.
+                //Ends the animation
                 finish();
 
 
@@ -80,7 +81,7 @@ public class SplashScreen extends AppCompatActivity {
                 }
             }
 
-            //Animasyon tekrarında yapılacaklar.
+            /*------------------------------Defines what will happen on animation repeat-------------------------------------------*/
             @Override
             public void onAnimationRepeat(Animation animation) {
 
@@ -88,6 +89,7 @@ public class SplashScreen extends AppCompatActivity {
         });
 
     }
+    /*--------------------------------------Defines what will happen during the animation-------------------------------------------*/
     @Override
     protected void onResume() {
         super.onResume();

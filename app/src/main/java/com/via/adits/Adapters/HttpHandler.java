@@ -15,22 +15,20 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 
-//Wifi Activity'de belirtilen adrese bağlantının yapılmasını sağlayan Class.
 public class HttpHandler {
 
     public HttpHandler(){}
 
-    //Servis bağlantısının (HTTP) yapılmasını sağlayan fonksiyon.
+    /*-----------------------------------------Function for connecting via HTTP----------------------------------------------------------*/
     public String makeServiceCall(String requestUrl){
         String response = null;
 
         try {
-
-            //Bağlantı adresini alır.
+            /*---------------------------------Creating an object, type of URL to use while trying to connect----------------------------*/
             URL url = new URL(requestUrl);
-            //Adresle bağlantı kurar.
+            /*---------------------------------Making a HTTP connection with the website at the given URL--------------------------------*/
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            //"GET" ile adresten veri alacağını belirtir. (Göndermek için "POST" kullanılır.)
+            /*--------------------------Defining Request Method as "GET" to get information. "POST" can be used for sending information----*/
             connection.setRequestMethod("GET");
             BufferedInputStream in = new BufferedInputStream (connection.getInputStream());
             response = convertStreamToString(in);
@@ -45,7 +43,7 @@ public class HttpHandler {
         return response;
     }
 
-    //Alınan DATAların String olarak formatlanmasını sağlayan fonksiyon.
+    /*----------------------------------------Function for converting the data from server to String format--------------------------------*/
     private String convertStreamToString(InputStream is){
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
@@ -54,8 +52,7 @@ public class HttpHandler {
         String satir = "";
 
         try{
-            //reader.readLine null olmadığı sürece (Okunabilir satır verisi var demektir.)
-            // Yeni verileri başka bir satır olarak ekle.
+            /*If reader.redLine is not null, there still is lines to read. Function for adding the new data as a new line-------------------*/
             while((satir = reader.readLine()) != null){
                 sb.append(satir).append("\n");
             }
