@@ -96,6 +96,9 @@ public class WifiScreen extends AppCompatActivity {
     //Relative layout definition for swiping the screen.
     RelativeLayout relativeLayout;
 
+    //Variable for checking the json data from the server.
+    Boolean sameNetwork;
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     /*------------------------------Defines what will happen after creating the screen-----------------------------*/
@@ -132,6 +135,9 @@ public class WifiScreen extends AppCompatActivity {
 
         final WifiAdapter wifiAdapter = new WifiAdapter(this, wifiAddresses);
         wifiList.setAdapter(wifiAdapter);
+
+        //Initializing the isJson as nodata
+        sameNetwork = false;
 
 
 
@@ -177,6 +183,14 @@ public class WifiScreen extends AppCompatActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
 
                 SSID = wifiAddresses.get(position).getSSID();
+                if (wifiManager.getConnectionInfo().getSupplicantState().toString().equalsIgnoreCase("completed")){
+                    if (wifiManager.getConnectionInfo().getSSID().equalsIgnoreCase(SSID)){
+                        sameNetwork = true;
+                    }
+                    else{
+                        sameNetwork = false;
+                    }
+                }
                 Password = "12345678";
                 if (SSID.contains("ADITS")){
                     Password = "12345678";
@@ -229,8 +243,10 @@ public class WifiScreen extends AppCompatActivity {
                                 levelTxt.setText("Level : Not Found");
                             }
 
-                            if (nameTxt.getText().toString().equalsIgnoreCase("Name : Not Found") && wifiManager.getConnectionInfo().getSupplicantState().toString().equalsIgnoreCase("completed")){
-                                getJSONdata();
+                            if (wifiManager.getConnectionInfo().getSupplicantState().toString().equalsIgnoreCase("completed")){
+                                if (!sameNetwork){
+                                    getJSONdata();
+                                }
                             }
                         }
                     });
@@ -266,7 +282,6 @@ public class WifiScreen extends AppCompatActivity {
         WifiConfiguration newCon =new WifiConfiguration();
         newCon.SSID = "\"" + SSID + "\"";
         newCon.preSharedKey = "\"" + Password + "\"";
-
         int netId = wifiManager.addNetwork(newCon);
 
         if (netId != -1)
@@ -409,6 +424,7 @@ public class WifiScreen extends AppCompatActivity {
                     healthTxt.setText("Health Status : " + kisi.getString("Healt Status"));
                     levelTxt.setText("Level : " + kisi.getString("Level"));
                     networkTxt.setText("Network : " + wifiManager.getConnectionInfo().getSSID());
+                    sameNetwork = true;
                 }
             }
             catch (Exception e){
