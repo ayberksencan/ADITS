@@ -232,6 +232,7 @@ public class WelcomeScreen extends AppCompatActivity {
         protected void onPreExecute() {
             progress = ProgressDialog.show(WelcomeScreen.this, "Sending...",
                     "JSON Information ", true);
+            progress.setCancelable(true);
         }
 
         @Override
