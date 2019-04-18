@@ -187,7 +187,7 @@ public class WifiScreen extends AppCompatActivity {
                 connect();
                 /*--- Waiting for device to connect to network before getting Json data. ---*/
                 try{
-                    Thread.sleep(6000);
+                    Thread.sleep(6500);
                 }
                 catch (Exception e){
                     e.printStackTrace();
@@ -215,40 +215,6 @@ public class WifiScreen extends AppCompatActivity {
         });
     }
     /*---------------------------CODE END------------------------------*/
-
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-
-                while(true){
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (!wifiManager.getConnectionInfo().getSSID().toString().contains("ADITS")){
-                                nameTxt.setText("Name : Not Found");
-                                tcTxt.setText("TC ID : Not Found");
-                                ageTxt.setText("Age : Not Found");
-                                healthTxt.setText("Health Status : Not Found");
-                                levelTxt.setText("Level : Not Found");
-                            }
-                        }
-                    });
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-        }).start();
-
-    }
 
 
     /*---------------------------scanWifi------------------------------*/
