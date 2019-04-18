@@ -110,7 +110,7 @@ public class WifiScreen extends AppCompatActivity {
         //This screen will always shown horizontal
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-        /*---------------------------Variable Initialization------------------------------*/
+        /*---------------------------Variable Initialization--------------------------------------------------------*/
 
         nameTxt = (TextView)findViewById(R.id.name_info);
         tcTxt = (TextView)findViewById(R.id.tc_info);
@@ -120,11 +120,6 @@ public class WifiScreen extends AppCompatActivity {
         networkTxt = (TextView) findViewById(R.id.network_info);
 
         wifiList = (ListView) findViewById(R.id.wifi_list);
-
-        /*
-        warning = (ImageView) findViewById(R.id.warning);
-        warningTxt = (TextView) findViewById(R.id.warningTxt);
-        */
 
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.pullToRefresh);
 
@@ -158,7 +153,7 @@ public class WifiScreen extends AppCompatActivity {
             scanWifi();
         }
 
-        /*---------------------------SwipePage to RegisterActivity(Wifi)------------------------------*/
+        /*---------------------------Page Swiping Function to Range and Welcome Screens------------------------------*/
         relativeLayout.setOnTouchListener(new OnSwipeTouchListener(WifiScreen.this){
             @Override
             public void onSwipeRight() {
@@ -173,7 +168,7 @@ public class WifiScreen extends AppCompatActivity {
             }
         });
 
-        /*--------------------------- wifiList Click------------------------------*/
+        /*---------------------------Defines what will happen when clicking an item on Wi-Fi List------------------------------*/
         wifiList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
@@ -189,7 +184,7 @@ public class WifiScreen extends AppCompatActivity {
                 connect();
                 /*--- Waiting for device to connect to network before getting Json data. ---*/
                 try{
-                    Thread.sleep(1500);
+                    Thread.sleep(4500);
                 }
                 catch (Exception e){
                     e.printStackTrace();
@@ -199,7 +194,7 @@ public class WifiScreen extends AppCompatActivity {
         });
 
 
-        /*-------------------------- swipeRefreshLayout Refresh ------------------------------*/
+        /*-------------------------- Refreshing Function for Wi-Fi List ------------------------------*/
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -219,6 +214,7 @@ public class WifiScreen extends AppCompatActivity {
     /*---------------------------CODE END------------------------------*/
 
 
+    /*------------------onResume function for checking if there is Json data or not continuously------------------------*/
     @Override
     protected void onResume() {
         super.onResume();
@@ -253,7 +249,7 @@ public class WifiScreen extends AppCompatActivity {
     }
 
 
-    /*---------------------------scanWifi------------------------------*/
+    /*---------------------------Wi-Fi Scanning Function------------------------------*/
     public void scanWifi(){
         wifiAddresses.clear();
         Toast.makeText(this, "Scanning Available Networks...", Toast.LENGTH_SHORT).show();
@@ -266,7 +262,7 @@ public class WifiScreen extends AppCompatActivity {
         }
     }
 
-    /*---------------------------connect ADITS------------------------------*/
+    /*---------------------------Connecting Function for clicked item on Wi-Fi List------------------------------*/
     public void connect(){
         List<WifiConfiguration> configurationList = wifiManager.getConfiguredNetworks();
         WifiConfiguration newCon =new WifiConfiguration();
@@ -296,7 +292,7 @@ public class WifiScreen extends AppCompatActivity {
         }
     }
 
-    /*---------------------------getJSONdata------------------------------*/
+    /*---------------------------Calls the AsyncTask which gets JsonData from Server------------------------------*/
 
     public void getJSONdata (){
         new getJSON().execute("http://192.168.4.1/json");
@@ -387,6 +383,12 @@ public class WifiScreen extends AppCompatActivity {
                     dosya += satir;
                 }
                 connection.disconnect();
+                if (dosya.length()<= 1){
+                    getJSONdata();
+                    int x = 0;
+                    Log.d("Yeniden Deneniyor", x+ "kere denendi");
+                    x++;
+                }
                 return dosya;
             } catch (Exception e) {
                 e.printStackTrace();
