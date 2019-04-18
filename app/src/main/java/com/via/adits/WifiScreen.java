@@ -189,7 +189,7 @@ public class WifiScreen extends AppCompatActivity {
                 connect();
                 /*--- Waiting for device to connect to network before getting Json data. ---*/
                 try{
-                    Thread.sleep(1000);
+                    Thread.sleep(1500);
                 }
                 catch (Exception e){
                     e.printStackTrace();
