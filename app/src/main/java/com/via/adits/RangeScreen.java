@@ -83,14 +83,6 @@ public class RangeScreen extends AppCompatActivity {
         dbm = (TextView) findViewById(R.id.dbm);
 
 
-        /*-------------------------This function controls what will happen when sliding the screen----------------------------------------------*/
-        rangeLay.setOnTouchListener(new OnSwipeTouchListener(RangeScreen.this) {
-            public void onSwipeRight() {
-                startActivity(new Intent(RangeScreen.this, WifiScreen.class));
-                finish();
-            }
-        });
-
         /*--------------------------Editing Visual Settings of the Range Chart-------------------------------------------------------------------*/
         GraphView graph = (GraphView) findViewById(R.id.range_chart);
         series = new LineGraphSeries<DataPoint>();
@@ -136,7 +128,7 @@ public class RangeScreen extends AppCompatActivity {
         viewport.setMinX(0);
         viewport.setMaxX(500);
         viewport.setMinY(-100);
-        viewport.setMaxY(-30);
+        viewport.setMaxY(-20);
         viewport.setYAxisBoundsManual(true);
         viewport.setScrollable(false);
     }
