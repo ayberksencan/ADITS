@@ -18,7 +18,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-/*-----------------------------------This function has been created for Splash Screen-----------------------------------------------------*/
+/*-----------------------------------This class has been created for Splash Screen-----------------------------------------------------*/
 public class SplashScreen extends AppCompatActivity {
 
 

@@ -161,22 +161,32 @@ public class WifiScreen extends AppCompatActivity {
         relativeLayout.setOnTouchListener(new OnSwipeTouchListener(WifiScreen.this){
             @Override
             public void onSwipeRight() {
-                        startActivity(new Intent(WifiScreen.this,WelcomeScreen.class));
-                        finish();
+                if(wifiManager.getConnectionInfo().getSupplicantState().equals("COMPLETED")){
+                    startActivity(new Intent(WifiScreen.this,WelcomeScreen.class));
+                    finish();
+                    }
+                else{
+                    Toast.makeText(WifiScreen.this, "Please connect to a network and try again later.", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
             public void onSwipeLeft() {
-                        startActivity(new Intent(WifiScreen.this,RangeScreen.class));
-                        finish();
+                startActivity(new Intent(WifiScreen.this,RangeScreen.class));
+                finish();
             }
         });
 
         wifiList.setOnTouchListener(new OnSwipeTouchListener(WifiScreen.this){
             @Override
             public void onSwipeRight() {
-                startActivity(new Intent(WifiScreen.this,WelcomeScreen.class));
-                finish();
+                if(wifiManager.getConnectionInfo().getSupplicantState().equals("COMPLETED")){
+                    startActivity(new Intent(WifiScreen.this,WelcomeScreen.class));
+                    finish();
+                }
+                else{
+                    Toast.makeText(WifiScreen.this, "Please connect to a network and try again later.", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
@@ -205,6 +215,7 @@ public class WifiScreen extends AppCompatActivity {
                 if (SSID.contains("ADITS")){
                     Password = "12345678";
                 }
+
                 else{
                     Password = "viA.Via_2018";
                 }

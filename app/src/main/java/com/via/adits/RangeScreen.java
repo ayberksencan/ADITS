@@ -118,6 +118,22 @@ public class RangeScreen extends AppCompatActivity {
             }
         });
 
+        /*-------------------------------------This function controls what will happen when swiping Left(On Layout)--------------------------*/
+        rangeLay.setOnTouchListener(new OnSwipeTouchListener(RangeScreen.this) {
+            public void onSwipeLeft() {
+                startActivity(new Intent(RangeScreen.this,MeterScreen.class));
+                finish();
+            }
+        });
+
+        /*-------------------------------------This function controls what will happen when swiping Left(On Graph)--------------------------*/
+        graph.setOnTouchListener(new OnSwipeTouchListener(RangeScreen.this) {
+            public void onSwipeLeft() {
+                startActivity(new Intent(RangeScreen.this,MeterScreen.class));
+                finish();
+            }
+        });
+
 
         GridLabelRenderer gridLabel = graph.getGridLabelRenderer();
         gridLabel.setPadding(3);
@@ -185,13 +201,9 @@ public class RangeScreen extends AppCompatActivity {
         else{
             series.appendData(new DataPoint(lastX++, level), true, 1000000);
         }
-
-
     }
 
-
     private void addEntryManual(int Level){
-
         ConnectivityManager connManagerr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo mWifii = connManagerr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 

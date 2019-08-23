@@ -28,6 +28,7 @@
     <string name="good">Good</string>
     <string name="Moderate">Moderate</string>
     <string name="Poor">Poor</string>
+    <string name="Meter">Approximate Centimeter:</string>
     <string name="nameNoData">Name: No Data</string>
     <string name="tc_id_no_data">Tc Id: No Data</string>
     <string name="age_no_data">Age: No Data</string>
