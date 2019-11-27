@@ -4,6 +4,7 @@ package com.via.adits;
 //Position: Intern
 //Company: Via Computer Systems Limited Company
 //Start Date of Project: 13/02/2019
+//Updated at: 27/11/2019
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
