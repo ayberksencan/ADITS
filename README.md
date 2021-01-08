@@ -22,7 +22,7 @@
 
 ** This application has specially made for a project named ADITS. ADITS is a project which aims for decrease the find time for people who has been effected by a natural disaster. 
 ** Wifi filter has been aplied to make finding people easier for emergency aid. 
-** This code is a product of VIA Bilgisayar Sistemleri Limited Şirketi and Ömer Ayberk ŞENCAN 
+** This code is a product of VIA Computer Systems Company and Ömer Ayberk ŞENCAN 
 
 ** Bu uygulama ADITS adındaki bir proje için özel olarak geliştirilmiştir. ADITS doğal afetlerden etkilenen insanların bulunma ve müdahale sürelerini kısaltmayı hedefleyen bir projedir. 
 ** Wifi filtresi acil yardıma ihtiyacı olan kişilerin bulunmasını kolaylaştırmak amacı ile uygulanmıştır. 
