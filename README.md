@@ -9,7 +9,7 @@
 3) Filtering Wifi's for ADITS and VIA SSID names 
 4) Accessing and showing Json data from ADITS (ADITS only)
 5) Accessing and changing Json data at ADITS web page. (ADITS only)
-6) Showing the dBm(Some kind of distance unit)
+6) Showing the dBm(The strenght of the Wi-Fi signal which will be used to measure the distance)
 
 ### Özellikler : 
 1) Müsait Wifi ağlarını tarama
