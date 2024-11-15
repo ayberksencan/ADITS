@@ -32,9 +32,9 @@ Please refer to the [LICENSE](./LICENSE) file for detailed terms.
 
 # ADITS - Acil Durum İnsan Tespit Sistemi
 
-** Bu uygulama ADITS adındaki bir proje için özel olarak geliştirilmiştir. ADITS doğal afetlerden etkilenen insanların bulunma ve müdahale sürelerini kısaltmayı hedefleyen bir projedir. 
-** Wifi filtresi acil yardıma ihtiyacı olan kişilerin bulunmasını kolaylaştırmak amacı ile uygulanmıştır. 
-** Bu uygulama VIA Bilgisayar Sistemleri Limited Şirketi ve Ömer Ayberk ŞENCAN'a aittir. 
+Bu uygulama ADITS adındaki bir proje için özel olarak geliştirilmiştir. ADITS doğal afetlerden etkilenen insanların bulunma ve müdahale sürelerini kısaltmayı hedefleyen bir projedir. 
+Wifi filtresi acil yardıma ihtiyacı olan kişilerin bulunmasını kolaylaştırmak amacı ile uygulanmıştır. 
+Bu uygulama VIA Bilgisayar Sistemleri Limited Şirketi ve Ömer Ayberk ŞENCAN'a aittir. 
 
 ### Özellikler : 
 1) Müsait Wifi ağlarını tarama
@@ -44,7 +44,7 @@ Please refer to the [LICENSE](./LICENSE) file for detailed terms.
 5) ADITS üzerindeki Json verisine erişme ve değiştirme (Sadece ADITS)
 6) dBm bilgisini görüntüleme (Wi-Fi sinyal gücü)
 
-**Kullanıcılarının izni olmadan kaynak kodunun, projenin tamamının ya da bir kısmının kullanılması ya da kopyalanması kesinlikle yasaktır. Tüm Hakları Saklıdır. 
+Kullanıcılarının izni olmadan kaynak kodunun, projenin tamamının ya da bir kısmının kullanılması ya da kopyalanması kesinlikle yasaktır. Tüm Hakları Saklıdır. 
 
 ## Yazarlar
 
