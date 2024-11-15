@@ -1,4 +1,4 @@
-# [EN]
+# English
 # ESHIS - Emergency Situation Human Identification System
 
 ** This application has been specially made for a project named ADITS. ADITS is a project that aims to decrease the find time for people who have been affected by a natural disaster. 
@@ -28,7 +28,7 @@ You are allowed to view the code for reference purposes only. Any reproduction, 
 
 Please refer to the [LICENSE](./LICENSE) file for detailed terms.
 
-#[TR]
+# Türkçe
 
 # ADITS - Acil Durum İnsan Tespit Sistemi
 
