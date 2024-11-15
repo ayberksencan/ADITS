@@ -1,9 +1,9 @@
 # English
 # ESHIS - Emergency Situation Human Identification System
 
-** This application has been specially made for a project named ADITS. ADITS is a project that aims to decrease the find time for people who have been affected by a natural disaster. 
-** A Wi-Fi filter has been applied to make finding people for emergency aid easier. 
-** This code is a product of VIA Bilgisayar Sistemleri Limited Şirketi and Ömer Ayberk ŞENCAN 
+** This application has been specially made for a project named ADITS. ADITS is a project that aims to decrease the find time for people who have been affected by a natural disaster. **
+** A Wi-Fi filter has been applied to make finding people for emergency aid easier. **
+** This code is a product of VIA Bilgisayar Sistemleri Limited Şirketi and Ömer Ayberk ŞENCAN **
 
 ### Features : 
 1) Scanning available Wifi's
