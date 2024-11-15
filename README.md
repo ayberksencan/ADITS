@@ -1,5 +1,4 @@
-## This code requests permission for access and changes the wifi state, access course, and fine location. 
-## Bu kod wifi durumuna erişim ve değiştirme izninin yanında konum bilgisine erişim izni gerektirir.
+##ADITS : Acil Durum İnsan Tespit Sistemi
 
 ### Features : 
 1) Scanning available Wifi's
